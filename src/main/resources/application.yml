@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: task-manager
+  datasource:
+    url: jdbc:postgresql://localhost:5433/task_manager
+    username: user
+    password: pass
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    database: POSTGRESQL
+    generate-ddl: true
+    sql:
+      init:
+        mode: embedded
+        platform: postgres
+  docker:
+    compose:
+      enabled: true
+      lifecycle-management: start_and_stop
+server:
+  port: 8080
