@@ -27,6 +27,12 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    public List<Task> getAllUserTasks(Long userId) {
+        List<Task> tasks = taskRepository.findTaskByUserId(userId);
+        return tasks;
+    }
+
+    @Override
     public List<TaskResponse> findAll() {
         if (taskRepository.findAll().isEmpty()) {
             throw new TaskNotFoundException(
@@ -38,22 +44,33 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public TaskResponse findById(Long id) {
-
         return Optional.of(getById(id)).map(taskMapper::toTaskResponse).get();
+    }
+
+
+    @Override
+    @Transactional
+    public Task save(TaskResponse taskResponse) {
+        return taskRepository.save(taskMapper.toTaskModel(taskResponse));
     }
 
     @Override
     @Transactional
     public TaskResponse update(Long id, TaskResponse taskResponse) {
         Task task = this.getById(id);
-        taskMapper.updateTask(taskResponse, task);
+        if (taskResponse.getComments() != null) {
+            task.setComments(taskResponse.getComments());
+        }
+        if (taskResponse.getDescription() != null) {
+            task.setDescription(taskResponse.getDescription());
+        }
+        if (taskResponse.getExecutor() != null) {
+            task.setExecutor(taskResponse.getExecutor());
+        }
+        if (taskResponse.getPriority() != null) {
+            task.setPriority(taskResponse.getPriority());
+        }
         return taskMapper.toTaskResponse(taskRepository.save(task));
-    }
-
-    @Override
-    @Transactional
-    public TaskResponse save(TaskResponse taskResponse) {
-        return taskMapper.toTaskResponse(taskRepository.save(taskMapper.toTaskModel(taskResponse)));
     }
 
     @Override
@@ -66,7 +83,7 @@ public class TaskServiceImpl implements TaskService {
     private Task getById(Long id) {
         return taskRepository.findById(id)
                 .orElseThrow(() -> new TaskNotFoundException(
-                            messageSource.getMessage("errors.404.task", new Object[0], null))
+                        messageSource.getMessage("errors.404.task", new Object[0], null))
                 );
     }
 }

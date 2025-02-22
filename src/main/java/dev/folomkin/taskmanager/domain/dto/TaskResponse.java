@@ -1,92 +1,44 @@
 package dev.folomkin.taskmanager.domain.dto;
 
-import dev.folomkin.taskmanager.domain.model.User;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
+@Data
+@Getter
+@Setter
 public class TaskResponse {
+
+    @Schema(description = "Идентификатор задачи", accessMode = Schema.AccessMode.READ_ONLY)
     private Long id;
+
+    @NotBlank
+    @Schema(description = "Заголовок задачи")
     private String title;
+
+    @Schema(description = "Описание задачи")
     private String description;
+
+    @NotBlank
+    @Schema(description = "Статус", example = "В ожидании, В процессе, Завершено")
     private String status;
+
+    @NotBlank
+    @Schema(description = "Приоритет задачи", example = "Низкий, Средний, Высокий")
     private String priority;
+
+    @Schema(description = "Комментарии к задаче")
     private String comments;
+
+    @NotBlank
+    @Schema(description = "Исполнитель задачи. Идентифицируется по email")
     private String executor;
-    private User user;
+
+    @Schema(description = "Автор задачи")
+    private String author;
 
     public TaskResponse() {
-    }
-
-    public TaskResponse(Long id, String title, String description, String status, String priority, String comments, String executor, User user) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.status = status;
-        this.priority = priority;
-        this.comments = comments;
-        this.executor = executor;
-        this.user = user;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getPriority() {
-        return priority;
-    }
-
-    public void setPriority(String priority) {
-        this.priority = priority;
-    }
-
-    public String getComments() {
-        return comments;
-    }
-
-    public void setComments(String comments) {
-        this.comments = comments;
-    }
-
-    public String getExecutor() {
-        return executor;
-    }
-
-    public void setExecutor(String executor) {
-        this.executor = executor;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 }

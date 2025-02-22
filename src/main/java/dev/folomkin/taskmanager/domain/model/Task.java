@@ -2,10 +2,8 @@ package dev.folomkin.taskmanager.domain.model;
 
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @NoArgsConstructor
@@ -23,8 +21,10 @@ public class Task {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "status")
-    private String status;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Status status;
+
 
     @Column(name = "priority")
     private String priority;
@@ -32,28 +32,54 @@ public class Task {
     @Column(name = "comments")
     private String comments;
 
-    @Column(name = "createDate")
-    @CreationTimestamp
-    private LocalDateTime createdAt;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(nullable = false)
+    private Date createdAt;
 
-    @Column(name = "updateDate")
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedAt;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date completedAt;
 
     @Column(name = "executor")
     private String executor;
 
     @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
     private User user;
 
+//    @PrePersist
+//    protected  void setCreatedAt() {
+//        if (this.createdAt == null) createdAt = new Date();
+//        if (this.updatedAt == null) updatedAt = new Date();
+//        if (this.id == null);
+//        try {
+//            id = Long.parseLong(UUID.randomUUID().toString());
+//        } catch (NumberFormatException nfe ) {
+//            nfe.printStackTrace();
+//        }
+//    }
+//
+//
+//    @PreUpdate
+//    protected  void setUpdatedAt() {
+//        this.updatedAt = new Date();
+//    }
+//
+//
+//    @PreRemove
+//    protected  void setCompletedAt() {
+//        this.completedAt = new Date();
+//    }
     public Task(Long id,
                 String title,
                 String description,
                 String status,
                 String priority,
                 String comments,
-                String executor,
-                User user) {
+                String executor
+    ) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -61,7 +87,6 @@ public class Task {
         this.priority = priority;
         this.comments = comments;
         this.executor = executor;
-        this.user = user;
     }
 
 
@@ -121,11 +146,5 @@ public class Task {
         this.executor = executor;
     }
 
-    public User getUser() {
-        return user;
-    }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
 }
