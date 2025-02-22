@@ -3,10 +3,11 @@ package dev.folomkin.taskmanager.controller;
 import dev.folomkin.taskmanager.domain.dto.TaskResponse;
 import dev.folomkin.taskmanager.domain.model.Task;
 import dev.folomkin.taskmanager.repository.TaskRepository;
-import dev.folomkin.taskmanager.service.TaskService;
+import dev.folomkin.taskmanager.service.TaskServiceImpl;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -21,20 +22,21 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1")
 public class TaskController {
-    private final TaskService taskService;
+    private final TaskServiceImpl taskService;
     private final TaskRepository taskRepository;
+    private final MessageSource messageSource;
 
-    public TaskController(TaskService taskService, TaskRepository taskRepository) {
+
+    public TaskController(TaskServiceImpl taskService, TaskRepository taskRepository, MessageSource messageSource) {
         this.taskService = taskService;
         this.taskRepository = taskRepository;
+        this.messageSource = messageSource;
     }
 
     @GetMapping("/tasks")
-    public ResponseEntity<List<TaskResponse>> tasks() {
+    public ResponseEntity<?> tasks() {
         List<TaskResponse> tasks = taskService.findAll();
-        return tasks.isEmpty() ?
-                ResponseEntity.noContent().build() :
-                ResponseEntity.ok(tasks);
+        return ResponseEntity.ok(tasks);
     }
 
     @GetMapping("/task/{id}")
@@ -46,20 +48,20 @@ public class TaskController {
     public ResponseEntity<TaskResponse> createPost(@RequestBody TaskResponse taskResponse) throws URISyntaxException {
         TaskResponse result = taskService.save(taskResponse);
         return ResponseEntity
-                .created(new URI("api/v1/task/" + result.id()))
+                .created(new URI("api/v1/task/" + result.getId()))
                 .body(result);
     }
 
-    @PutMapping("/post/{id}")
+    @PatchMapping("/task/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<TaskResponse> updatePost(
             @PathVariable Long id,
-            @Valid @RequestBody TaskResponse postResponse
+            @Valid @RequestBody TaskResponse taskResponse
     ) {
-        return ResponseEntity.ok().body(taskService.update(id, postResponse));
+        return ResponseEntity.ok().body(taskService.update(id, taskResponse));
     }
 
-    @DeleteMapping("/post/{id}")
+    @DeleteMapping("/task/{id}")
     public ResponseEntity<?> deletePost(@PathVariable Long id) {
         taskService.deleteById(id);
         return ResponseEntity.ok().build();
