@@ -1,20 +1,32 @@
 package dev.folomkin.taskmanager.service;
 
-import dev.folomkin.taskmanager.domain.dto.TaskResponse;
+import dev.folomkin.taskmanager.domain.dto.TaskDto;
 import dev.folomkin.taskmanager.domain.model.Task;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public interface TaskService {
+    List<Task> tasks = new ArrayList<>();
+
+    // List<Task> getAllUserTasks(String userId);
 
     List<Task> getAllUserTasks(Long userId);
 
-    List<TaskResponse> findAll();
+    List<Task> getAllTasks();
 
-    TaskResponse findById(Long id);
+    public Task getTask(Long id);
 
-    TaskResponse update(Long id, TaskResponse task);
-    Task save(TaskResponse task);
+    public Task addTask(TaskDto taskDto);
 
-    void deleteById(Long id);
+    public Task updateTask(Long id, TaskDto taskDto);
+
+    public void deleteTask(Long id);
+
+    public Task pendingToInProgress(Long id, TaskDto taskDto);
+
+    public Task InProgressBackToPending(Long id, TaskDto taskDto);
+
+    public Task InProgressToDone(Long id, TaskDto taskDto);
+
 }

@@ -1,16 +1,15 @@
 package dev.folomkin.taskmanager.controller;
 
-import dev.folomkin.taskmanager.domain.dto.TaskResponse;
+import dev.folomkin.taskmanager.domain.dto.TaskDto;
 import dev.folomkin.taskmanager.domain.model.Task;
 import dev.folomkin.taskmanager.repository.TaskRepository;
-import dev.folomkin.taskmanager.service.TaskServiceImpl;
+import dev.folomkin.taskmanager.service.TaskService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -19,94 +18,88 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-
 @Tag(name = "Управление задачами", description = "API управления задачами")
 @RestController
 @RequestMapping("/api/v1")
 @Validated
 public class TaskController {
-    private final TaskServiceImpl taskService;
+    private final TaskService taskService;
     private final TaskRepository taskRepository;
-    private final MessageSource messageSource;
 
+    TaskDto taskDto;
 
-    public TaskController(TaskServiceImpl taskService, TaskRepository taskRepository, MessageSource messageSource) {
+    public TaskController(TaskService taskService,
+                          TaskRepository taskRepository) {
         this.taskService = taskService;
         this.taskRepository = taskRepository;
-        this.messageSource = messageSource;
     }
 
-    @Operation(
-            summary = "Получение списка всех задач",
-            description = ""
-    )
+    @Operation(summary = "Получение списка всех задач")
     @GetMapping("/tasks")
     public ResponseEntity<?> tasks() {
-        return ResponseEntity.ok(taskService.findAll());
+        return ResponseEntity.ok(taskService.getAllTasks());
     }
 
-    @Operation(
-            summary = "Получение одной задачи",
-            description = "Необходимо указать id задачи"
-    )
-    @GetMapping("/task/{id}")
-    public ResponseEntity<TaskResponse> getTask(
-            @PathVariable
-            @Parameter(description = "Идентификатор задачи", required = true)
-            Long id) {
-        return ResponseEntity.ok().body(taskService.findById(id));
+    @Operation(summary = "Получение одной задачи", description = "Необходимо указать id задачи")
+    @GetMapping("/task/{taskId}")
+    public ResponseEntity<Task> getTask(@PathVariable("taskId")
+            @Parameter(description = "Идентификатор задачи", required = true) Long taskId) {
+        return ResponseEntity.ok().body(taskService.getTask(taskId));
     }
 
-    @Operation(
-            summary = "Создание задачи",
-            description = ""
-    )
-    @PostMapping("/task")
-    public ResponseEntity<Task> createPost(
-            @Valid @RequestBody TaskResponse taskResponse) throws URISyntaxException {
-        Task result = taskService.save(taskResponse);
-        return ResponseEntity
-                .created(new URI("api/v1/task/" + result.getId()))
-                .body(result);
-    }
-
-    @Operation(
-            summary = "Обновление задачи",
-            description = "Необходимо указать id задачи"
-    )
-    @PatchMapping("/task/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<?> updatePost(
-            @PathVariable("id")
-            @Parameter(description = "Идентификатор задачи", required = true) Long id,
-            @Valid @RequestBody
-            @Parameter(description = "Поля для обновления",
-                    example = "Статус: В ожидании"
-            )
-            TaskResponse taskResponse
-    ) {
-        taskService.update(id, taskResponse);
-        return new ResponseEntity<>("Задача успешно обновлена", HttpStatus.OK);
+    @Operation(summary = "Создание задачи")
+    @PostMapping("/addtask")
+    public ResponseEntity<TaskDto> addTask(@Valid @RequestBody TaskDto taskDto) {
+        taskService.addTask(taskDto);
+        return new ResponseEntity<>(taskDto, HttpStatus.CREATED);
     }
 
 
-    @Operation(
-            summary = "Удаление задачи",
-            description = "Необходимо указать id задачи"
-    )
-    @DeleteMapping("/task/{id}")
-    public ResponseEntity<?> deletePost(@PathVariable("id") @Parameter(description = "Идентификатор задачи", required = true) Long id) {
-        taskService.deleteById(id);
-        return ResponseEntity.ok().build();
+    @Operation(summary = "Обновление задачи", description = "Необходимо указать id задачи")
+    @PutMapping("/update/{taskId}")
+    public ResponseEntity<String> updateTask(@PathVariable("taskId")
+                                             @Parameter(description = "Идентификатор задачи", required = true) Long taskId,
+                                             @Valid @RequestBody TaskDto taskDto) {
+        taskService.updateTask(taskId, taskDto);
+        return new ResponseEntity<>("Task updated successfully!", HttpStatus.OK);
+    }
+
+    @Operation(summary = "Удаление задачи", description = "Необходимо указать id задачи")
+    @DeleteMapping("/delete/{taskId}")
+    public ResponseEntity<String> deleteTask(@PathVariable("taskId")
+                                             @Parameter(description = "Идентификатор задачи", required = true) Long taskId) {
+        taskService.deleteTask(taskId);
+        return new ResponseEntity<>("Задача успешно удалена", HttpStatus.NO_CONTENT);
+    }
+
+    @Operation(summary = "Изменение статуса задачи",
+            description = "Изменение статуса задачи с \"В ожидании\" на \"В процессе\" по id задачи")
+    @PutMapping("/status/progress/{taskId}")
+    public ResponseEntity<String> pendingToProgress(@PathVariable("taskId")
+                                                    @Parameter(description = "Идентификатор задачи", required = true) Long taskId, @RequestBody TaskDto taskDto) {
+        taskService.pendingToInProgress(taskId, taskDto);
+        return new ResponseEntity<>("Статус задачи успешно изменен!", HttpStatus.OK);
+    }
+
+    @Operation(summary = "Изменение статуса задачи",
+            description = "Изменение статуса задачи с  \"В процессе\" на \"В ожидании\" по id задачи")
+    @PutMapping("/status/pending/{taskId}")
+    public ResponseEntity<String> inProgressToPending(@PathVariable("taskId")
+                                                      @Parameter(description = "Идентификатор задачи", required = true) Long taskId, @RequestBody TaskDto taskDto) {
+        taskService.InProgressBackToPending(taskId, taskDto);
+        return new ResponseEntity<>("Статус задачи успешно изменен!", HttpStatus.OK);
+    }
+
+    @Operation(summary = "Изменение статуса задачи",
+            description = "Изменение статуса задачи с  \"В процессе\" на \"Завершено\" по id задачи")
+    @PutMapping("/status/done/{taskId}")
+    public ResponseEntity<String> inProgressToDone(@PathVariable("taskId") @Parameter(description = "Идентификатор задачи", required = true) Long taskId, @RequestBody TaskDto taskDto) {
+        taskService.InProgressToDone(taskId, taskDto);
+        return new ResponseEntity<>("Task status changed successfully", HttpStatus.OK);
     }
 
 
-    @Operation(
-            summary = "Фильтрация и сортировка задач",
-            description = "Для сортировки укажите поле"
-    )
+    @Operation(summary = "Фильтрация и сортировка задач", description = "Для сортировки укажите поле")
     @GetMapping("/filter")
     public Page<Task> filterBooks(
             @RequestParam(value = "offset", defaultValue = "0")

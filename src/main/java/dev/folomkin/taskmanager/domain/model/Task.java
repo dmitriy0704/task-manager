@@ -75,7 +75,7 @@ public class Task {
     public Task(Long id,
                 String title,
                 String description,
-                String status,
+                Status status,
                 String priority,
                 String comments,
                 String executor
@@ -114,11 +114,11 @@ public class Task {
         this.description = description;
     }
 
-    public String getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 

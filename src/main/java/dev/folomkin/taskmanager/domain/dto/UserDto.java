@@ -9,10 +9,7 @@ import lombok.Setter;
 @Data
 @Getter
 @Setter
-public class UserResponse {
-
-    @Schema(description = "Идентификатор пользователя", accessMode = Schema.AccessMode.READ_ONLY)
-    private Long id;
+public class UserDto {
 
     @NotBlank
     @Schema(description = "Имя пользователя автора задачи")
@@ -23,6 +20,6 @@ public class UserResponse {
     private String email;
 
 
-    public UserResponse() {
+    public UserDto() {
     }
 }
