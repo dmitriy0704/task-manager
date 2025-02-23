@@ -39,13 +39,6 @@ public class UserServiceImpl implements UserService {
     }
 
 
-    public UserResponseDto userToDto(User user) {
-        UserResponseDto userResponseDto = new UserResponseDto();
-        userResponseDto.setUsername(user.getUsername());
-        userResponseDto.setEmail(user.getEmail());
-        return userResponseDto;
-    }
-
     @Override
     public Optional<User> getUserById(Long userId) {
         return userRepository.findById(userId);
