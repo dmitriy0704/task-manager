@@ -37,6 +37,16 @@ public class TaskServiceImpl implements TaskService {
 
 
     @Override
+    public Page<Task> getAllTasks(PageRequest request) {
+        return taskRepository.findAll(request);
+    }
+
+    @Override
+    public Task getTask(Long taskId) {
+        return getById(taskId);
+    }
+
+    @Override
     @Transactional
     public Task create(TaskSaveDto taskSaveDto) {
         Long userId = taskSaveDto.getUserId();
@@ -47,18 +57,6 @@ public class TaskServiceImpl implements TaskService {
         task.setUser(user.get());
         taskRepository.save(task);
         return task;
-    }
-
-
-    @Override
-    public Page<Task> getAllTasks(PageRequest request) {
-        return taskRepository.findAll(request);
-    }
-
-
-    @Override
-    public Task getTask(Long taskId) {
-        return getById(taskId);
     }
 
 

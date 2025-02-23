@@ -1,7 +1,11 @@
 package dev.folomkin.taskmanager.service.user;
 
+import dev.folomkin.taskmanager.domain.model.Role;
 import dev.folomkin.taskmanager.domain.model.User;
+import dev.folomkin.taskmanager.exceptions.ForbiddenInvalidFieldException;
 import dev.folomkin.taskmanager.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -16,6 +20,12 @@ public class UserServiceImpl implements UserService {
 
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
+    }
+
+
+    @Override
+    public Page<User> findAll(PageRequest request) {
+        return userRepository.findAll(request);
     }
 
     @Override
@@ -41,12 +51,11 @@ public class UserServiceImpl implements UserService {
      */
     public User create(User user) {
         if (userRepository.existsByUsername(user.getUsername())) {
-            // Заменить на свои исключения
-            throw new RuntimeException("Пользователь с таким именем уже существует");
+            throw new ForbiddenInvalidFieldException("Пользователь с таким именем уже существует");
         }
 
         if (userRepository.existsByEmail(user.getEmail())) {
-            throw new RuntimeException("Пользователь с таким email уже существует");
+            throw new ForbiddenInvalidFieldException("Пользователь с таким email уже существует");
         }
 
         return save(user);
@@ -85,6 +94,16 @@ public class UserServiceImpl implements UserService {
         return getByUsername(username);
     }
 
-
+    /**
+     * Выдача прав администратора текущему пользователю
+     * <p>
+     * Нужен для демонстрации
+     */
+    @Deprecated
+    public void getAdmin() {
+        var user = getCurrentUser();
+        user.setRole(Role.ROLE_ADMIN);
+        save(user);
+    }
 
 }

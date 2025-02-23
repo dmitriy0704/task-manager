@@ -2,10 +2,10 @@ package dev.folomkin.taskmanager.controller;
 
 import dev.folomkin.taskmanager.domain.dto.task.TaskDto;
 import dev.folomkin.taskmanager.domain.dto.task.TaskSaveDto;
-import dev.folomkin.taskmanager.domain.mapper.TaskMapper;
 import dev.folomkin.taskmanager.domain.model.Task;
-import dev.folomkin.taskmanager.repository.TaskRepository;
+import dev.folomkin.taskmanager.domain.model.User;
 import dev.folomkin.taskmanager.service.task.TaskService;
+import dev.folomkin.taskmanager.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,42 +22,44 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Tag(name = "Управление задачами", description = "API управления задачами")
+@Tag(name = "Управление задачами", description = "Для авторизованных пользователей")
 @RestController
 @RequestMapping("/api/v1")
 @Validated
 public class TaskController {
     private final TaskService taskService;
-    private final TaskRepository taskRepository;
-    private final TaskMapper taskMapper;
+    private final UserService userService;
 
-    TaskDto taskDto;
-
-    public TaskController(TaskService taskService,
-                          TaskRepository taskRepository, TaskMapper taskMapper) {
+    public TaskController(TaskService taskService, UserService userService) {
         this.taskService = taskService;
-        this.taskRepository = taskRepository;
-        this.taskMapper = taskMapper;
+        this.userService = userService;
     }
 
-//    @Operation(summary = "Получение списка всех задач")
-//    @GetMapping("/tasks")
-//    public ResponseEntity<?> tasks() {
-//        return ResponseEntity.ok(taskService.getAllTasks());
-//    }
-
-
-    @Operation(summary = "Фильтрация и сортировка задач", description = "Для сортировки укажите поле")
+    @Operation(summary = "Получение списка всех задач", description = "Только для авторизованных пользователей")
     @GetMapping("/tasks")
     public Page<Task> filterTasks(
             @RequestParam(value = "offset", defaultValue = "0")
-            @Min(0) @Parameter(description = "Страница с результатом") Integer offset,
+            @Min(0) @Parameter(description = "Номер страницы с результатом") Integer offset,
             @RequestParam(value = "limit", defaultValue = "10") @Min(1) @Max(50)
-            @Parameter(description = "Количество выводимых задач. От 1 до 50") Integer limit,
-            @RequestParam("sort") @Parameter(description = "Поле сортировки") String sortField
+            @Parameter(description = "Количество выводимых задач на странице. Минимум 1, максимум 50") Integer limit,
+            @RequestParam(value = "sort", required = false) @Parameter(description = "Поле сортировки") String sortField
     ) {
         PageRequest pageRequest = PageRequest.of(offset, limit, Sort.by(Sort.Direction.ASC, sortField));
         return taskService.getAllTasks(pageRequest);
+    }
+
+
+        @Operation(summary = "Получение списка всех пользователей", description = "Только для авторизованных пользователей")
+    @GetMapping("/users")
+    public Page<User> filterUser(
+            @RequestParam(value = "offset", defaultValue = "0")
+            @Min(0) @Parameter(description = "Номер страницы с результатом") Integer offset,
+            @RequestParam(value = "limit", defaultValue = "10") @Min(1) @Max(50)
+            @Parameter(description = "Количество выводимых пользователей на странице. Минимум 1, максимум 50") Integer limit,
+            @RequestParam(value = "sort") @Parameter(description = "Поле сортировки") String sortField
+    ) {
+        PageRequest pageRequest = PageRequest.of(offset, limit, Sort.by(Sort.Direction.ASC, sortField));
+        return userService.findAll(pageRequest);
     }
 
 
