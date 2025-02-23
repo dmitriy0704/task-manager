@@ -1,32 +1,27 @@
 package dev.folomkin.taskmanager.service;
 
 import dev.folomkin.taskmanager.domain.dto.TaskDto;
+import dev.folomkin.taskmanager.domain.dto.TaskSaveDto;
 import dev.folomkin.taskmanager.domain.model.Task;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public interface TaskService {
-    List<Task> tasks = new ArrayList<>();
+    Task create(TaskSaveDto taskSaveDto);
 
-    // List<Task> getAllUserTasks(String userId);
+    Page<Task> getAllTasks(PageRequest request);
+
+    Task getTask(Long id);
+
+    Task updateStatusTask(Long id, TaskDto taskDto);
+
+    Task updatePriorityTask(Long id, TaskDto taskDto);
+
+    void deleteTask(Long id);
 
     List<Task> getAllUserTasks(Long userId);
 
-    List<Task> getAllTasks();
-
-    public Task getTask(Long id);
-
-    public Task addTask(TaskDto taskDto);
-
-    public Task updateTask(Long id, TaskDto taskDto);
-
-    public void deleteTask(Long id);
-
-    public Task pendingToInProgress(Long id, TaskDto taskDto);
-
-    public Task InProgressBackToPending(Long id, TaskDto taskDto);
-
-    public Task InProgressToDone(Long id, TaskDto taskDto);
 
 }

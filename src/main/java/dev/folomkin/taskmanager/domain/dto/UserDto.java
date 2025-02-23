@@ -11,6 +11,8 @@ import lombok.Setter;
 @Setter
 public class UserDto {
 
+    private Long id;
+
     @NotBlank
     @Schema(description = "Имя пользователя автора задачи")
     private String username;
@@ -19,7 +21,4 @@ public class UserDto {
     @Schema(description = "Email пользователя")
     private String email;
 
-
-    public UserDto() {
-    }
 }

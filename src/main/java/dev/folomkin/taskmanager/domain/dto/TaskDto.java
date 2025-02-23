@@ -1,42 +1,34 @@
 package dev.folomkin.taskmanager.domain.dto;
 
+import dev.folomkin.taskmanager.domain.model.Priority;
 import dev.folomkin.taskmanager.domain.model.Status;
-import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
+import dev.folomkin.taskmanager.domain.model.Task;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Data
+@NoArgsConstructor
 @Getter
 @Setter
 public class TaskDto {
-
-    @NotBlank
-    @Schema(description = "Заголовок задачи")
+    private Long id;
     private String title;
-
-    @Schema(description = "Описание задачи")
     private String description;
-
-    @NotBlank
-    @Schema(description = "Статус", example = "В ожидании, В процессе, Завершено")
     private Status status;
-
-    @NotBlank
-    @Schema(description = "Приоритет задачи", example = "Низкий, Средний, Высокий")
-    private String priority;
-
-    @Schema(description = "Комментарии к задаче")
+    private Priority priority;
     private String comments;
-
-    @NotBlank
-    @Schema(description = "Исполнитель задачи. Идентифицируется по email")
     private String executor;
-
-    @Schema(description = "Автор задачи")
     private String author;
 
-    public TaskDto() {
+    public static TaskDto toDTO(Task task) {
+        TaskDto taskDto = new TaskDto();
+        taskDto.setId(task.getId());
+        taskDto.setTitle(task.getTitle());
+        taskDto.setDescription(task.getDescription());
+        taskDto.setStatus(task.getStatus());
+        taskDto.setPriority(task.getPriority());
+        taskDto.setComments(task.getComments());
+        taskDto.setExecutor(task.getExecutor());
+        return taskDto;
     }
 }

@@ -1,5 +1,9 @@
 package dev.folomkin.taskmanager.exceptions;
 
+import jakarta.validation.ValidationException;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -14,6 +18,7 @@ import java.nio.file.AccessDeniedException;
 import java.util.Date;
 
 @ControllerAdvice
+@Slf4j
 public class GlobalControllerExceptionHandler extends ResponseEntityExceptionHandler {
 
     private final MessageSource messageSource;
@@ -22,10 +27,11 @@ public class GlobalControllerExceptionHandler extends ResponseEntityExceptionHan
         this.messageSource = messageSource;
     }
 
+Logger logger = LoggerFactory.getLogger(GlobalControllerExceptionHandler.class);
 
-    @ExceptionHandler(value = TaskNotFoundException.class)
+    @ExceptionHandler(value =  ResourceNotFoundException.class)
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
-    protected ResponseEntity<ErrorMessage> taskNotFound(TaskNotFoundException ex, WebRequest request) {
+    protected ResponseEntity<ErrorMessage> taskNotFound(ResourceNotFoundException ex, WebRequest request) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(new ErrorMessage(
@@ -36,18 +42,18 @@ public class GlobalControllerExceptionHandler extends ResponseEntityExceptionHan
     }
 
 
+    @ExceptionHandler({IllegalArgumentException.class, ValidationException.class})
+    public ResponseEntity<ErrorMessage> handleValidationExceptions(Exception ex, WebRequest request) {
+        logger.error("Validation error: {}", ex.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorMessage(
+                        HttpStatus.BAD_REQUEST.value(),
+                        new Date(),
+                        ex.getMessage(),
+                        request.getDescription(false)));
+    }
 
-//    @ExceptionHandler(value = RuntimeException.class)
-//    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
-//    protected ResponseEntity<ErrorMessage> handleInternalServerError(RuntimeException ex, WebRequest request) {
-//        return ResponseEntity
-//                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                .body(new ErrorMessage(
-//                        HttpStatus.INTERNAL_SERVER_ERROR.value(),
-//                        new Date(),
-//                        new Exception("Ошибка сервера").getMessage(),
-//                        request.getDescription(false)));
-//    }
 
 
     @ExceptionHandler({AccessDeniedException.class})
