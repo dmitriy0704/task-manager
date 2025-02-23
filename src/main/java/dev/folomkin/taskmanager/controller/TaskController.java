@@ -2,6 +2,7 @@ package dev.folomkin.taskmanager.controller;
 
 import dev.folomkin.taskmanager.domain.dto.task.TaskDto;
 import dev.folomkin.taskmanager.domain.dto.task.TaskSaveDto;
+import dev.folomkin.taskmanager.domain.dto.user.UserResponseDto;
 import dev.folomkin.taskmanager.domain.model.Task;
 import dev.folomkin.taskmanager.domain.model.User;
 import dev.folomkin.taskmanager.service.task.TaskService;
@@ -17,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,9 +51,9 @@ public class TaskController {
     }
 
 
-        @Operation(summary = "Получение списка всех пользователей", description = "Только для авторизованных пользователей")
+    @Operation(summary = "Получение списка всех пользователей", description = "Только для авторизованных пользователей")
     @GetMapping("/users")
-    public Page<User> filterUser(
+    public Page<UserResponseDto> filterUser(
             @RequestParam(value = "offset", defaultValue = "0")
             @Min(0) @Parameter(description = "Номер страницы с результатом") Integer offset,
             @RequestParam(value = "limit", defaultValue = "10") @Min(1) @Max(50)
@@ -72,6 +74,7 @@ public class TaskController {
     }
 
     @Operation(summary = "Создание задачи")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/create-task")
     public ResponseEntity<Task> create(@Valid @RequestBody TaskSaveDto taskSaveDto) {
         Task task = taskService.create(taskSaveDto);
@@ -88,6 +91,7 @@ public class TaskController {
     }
 
     @Operation(summary = "Удаление задачи", description = "Необходимо указать id задачи")
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/delete/{taskId}")
     public ResponseEntity<String> deleteTask(@PathVariable("taskId")
                                              @Parameter(description = "Идентификатор задачи",

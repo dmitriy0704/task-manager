@@ -1,5 +1,6 @@
 package dev.folomkin.taskmanager.service.user;
 
+import dev.folomkin.taskmanager.domain.dto.user.UserResponseDto;
 import dev.folomkin.taskmanager.domain.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -9,7 +10,7 @@ import java.util.Optional;
 
 public interface UserService {
 
-    Page<User> findAll(PageRequest request);
+    Page<UserResponseDto> findAll(PageRequest request);
     Optional<User> getUserById(Long userId);
     User save(User user);
     User create(User user);

@@ -1,17 +1,23 @@
 package dev.folomkin.taskmanager.service.user;
 
+import dev.folomkin.taskmanager.domain.dto.user.UserResponseDto;
+import dev.folomkin.taskmanager.domain.mapper.UserMapper;
 import dev.folomkin.taskmanager.domain.model.Role;
 import dev.folomkin.taskmanager.domain.model.User;
 import dev.folomkin.taskmanager.exceptions.ForbiddenInvalidFieldException;
 import dev.folomkin.taskmanager.repository.UserRepository;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -24,8 +30,20 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public Page<User> findAll(PageRequest request) {
-        return userRepository.findAll(request);
+    public Page<UserResponseDto> findAll(PageRequest request) {
+        return new PageImpl<>(userRepository
+                .findAll(request)
+                .stream()
+                .map(UserMapper::toUserDto)
+                .toList());
+    }
+
+
+    public UserResponseDto userToDto(User user) {
+        UserResponseDto userResponseDto = new UserResponseDto();
+        userResponseDto.setUsername(user.getUsername());
+        userResponseDto.setEmail(user.getEmail());
+        return userResponseDto;
     }
 
     @Override
