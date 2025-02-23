@@ -1,7 +1,6 @@
-package dev.folomkin.taskmanager.domain.dto;
+package dev.folomkin.taskmanager.domain.dto.user;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,14 +10,11 @@ import lombok.Setter;
 @Setter
 public class UserDto {
 
-    @NotBlank
     @Schema(description = "Имя пользователя автора задачи")
     private String username;
 
-    @NotBlank
     @Schema(description = "Email пользователя")
     private String email;
 
-    @NotBlank
     private String password;
 }

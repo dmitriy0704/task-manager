@@ -1,11 +1,11 @@
 package dev.folomkin.taskmanager.controller;
 
-import dev.folomkin.taskmanager.domain.dto.TaskDto;
-import dev.folomkin.taskmanager.domain.dto.TaskSaveDto;
+import dev.folomkin.taskmanager.domain.dto.task.TaskDto;
+import dev.folomkin.taskmanager.domain.dto.task.TaskSaveDto;
 import dev.folomkin.taskmanager.domain.mapper.TaskMapper;
 import dev.folomkin.taskmanager.domain.model.Task;
 import dev.folomkin.taskmanager.repository.TaskRepository;
-import dev.folomkin.taskmanager.service.TaskService;
+import dev.folomkin.taskmanager.service.task.TaskService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;

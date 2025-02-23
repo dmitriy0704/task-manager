@@ -1,6 +1,6 @@
 package dev.folomkin.taskmanager.domain.mapper;
 
-import dev.folomkin.taskmanager.domain.dto.TaskSaveDto;
+import dev.folomkin.taskmanager.domain.dto.task.TaskSaveDto;
 import dev.folomkin.taskmanager.domain.model.Task;
 import org.springframework.stereotype.Component;
 

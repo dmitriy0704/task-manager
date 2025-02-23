@@ -1,12 +1,13 @@
-package dev.folomkin.taskmanager.service;
+package dev.folomkin.taskmanager.service.task;
 
-import dev.folomkin.taskmanager.domain.dto.TaskDto;
-import dev.folomkin.taskmanager.domain.dto.TaskSaveDto;
+import dev.folomkin.taskmanager.domain.dto.task.TaskDto;
+import dev.folomkin.taskmanager.domain.dto.task.TaskSaveDto;
 import dev.folomkin.taskmanager.domain.mapper.TaskMapper;
 import dev.folomkin.taskmanager.domain.model.Task;
 import dev.folomkin.taskmanager.domain.model.User;
 import dev.folomkin.taskmanager.exceptions.ResourceNotFoundException;
 import dev.folomkin.taskmanager.repository.TaskRepository;
+import dev.folomkin.taskmanager.service.user.UserService;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

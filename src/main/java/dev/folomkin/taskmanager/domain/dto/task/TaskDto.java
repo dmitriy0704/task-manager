@@ -1,4 +1,4 @@
-package dev.folomkin.taskmanager.domain.dto;
+package dev.folomkin.taskmanager.domain.dto.task;
 
 import dev.folomkin.taskmanager.domain.model.Priority;
 import dev.folomkin.taskmanager.domain.model.Status;
