@@ -112,4 +112,26 @@ public class TaskController {
                                                    @Valid @RequestBody TaskDto taskDto) {
         return ResponseEntity.ok(taskService.updateStatusTask(taskId, taskDto));
     }
+
+
+    @Operation(summary = "Обновление описания задачи", description = "Необходимо указать id задачи")
+    @PatchMapping("/update-description/{taskId}")
+    public ResponseEntity<Task> updateDescriptionTask(@PathVariable("taskId")
+                                                      @Parameter(description = "Идентификатор задачи",
+                                                              required = true) Long taskId,
+                                                      @Valid @RequestBody TaskDto taskDto) {
+        return ResponseEntity.ok(taskService.updateStatusTask(taskId, taskDto));
+    }
+
+
+    @Operation(summary = "Обновление комментария к задаче", description = "Необходимо указать id задачи")
+    @PatchMapping("/update-comments/{taskId}")
+    public ResponseEntity<Task> updateCommentsTask(@PathVariable("taskId")
+                                                   @Parameter(description = "Идентификатор задачи",
+                                                           required = true) Long taskId,
+                                                   @Valid @RequestBody TaskDto taskDto) {
+        return ResponseEntity.ok(taskService.updateStatusTask(taskId, taskDto));
+    }
+
+
 }

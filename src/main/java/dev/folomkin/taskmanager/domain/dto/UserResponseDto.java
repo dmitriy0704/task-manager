@@ -9,8 +9,9 @@ import lombok.Setter;
 @Data
 @Getter
 @Setter
-public class UserDto {
+public class UserResponseDto {
 
+    private Long id;
     @NotBlank
     @Schema(description = "Имя пользователя автора задачи")
     private String username;
@@ -19,6 +20,4 @@ public class UserDto {
     @Schema(description = "Email пользователя")
     private String email;
 
-    @NotBlank
-    private String password;
 }

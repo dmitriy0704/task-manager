@@ -89,6 +89,22 @@ public class TaskServiceImpl implements TaskService {
         return changedTask;
     }
 
+    @Override
+    public Task updateDescriptionTask(Long taskId, TaskDto taskDto) {
+        Task changedTask = getById(taskId);
+        changedTask.setDescription(taskDto.getDescription());
+        taskRepository.save(changedTask);
+        return changedTask;
+    }
+
+    @Override
+    public Task updateCommentsTask(Long taskId, TaskDto taskDto) {
+        Task changedTask = getById(taskId);
+        changedTask.setComments(taskDto.getComments());
+        taskRepository.save(changedTask);
+        return changedTask;
+    }
+
 
     private Task getById(Long id) {
         return taskRepository.findById(id)

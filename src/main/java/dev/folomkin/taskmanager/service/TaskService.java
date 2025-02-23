@@ -16,6 +16,8 @@ public interface TaskService {
     Task getTask(Long id);
 
     Task updateStatusTask(Long id, TaskDto taskDto);
+    Task updateDescriptionTask(Long id, TaskDto taskDto);
+    Task updateCommentsTask(Long id, TaskDto taskDto);
 
     Task updatePriorityTask(Long id, TaskDto taskDto);
 
