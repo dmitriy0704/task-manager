@@ -1,5 +1,6 @@
 package dev.folomkin.taskmanager.domain.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
@@ -17,9 +18,11 @@ public class Task {
     @SequenceGenerator(name = "task_id_seq", sequenceName = "task_id_seq", allocationSize = 1)
     private Long id;
 
-    @Column(name = "title")
+    @Schema(description = "Заголовок задачи")
+    @Column(name = "title", nullable = false, unique = true)
     private String title;
 
+    @Schema(description = "Описание задачи")
     @Column(name = "description")
     private String description;
 
@@ -34,14 +37,17 @@ public class Task {
     @Column(name = "modify_date")
     private Date modifyDate;
 
+    @Schema(description = "Статус", example = "PENDING, IN_PROGRESS, FINISHED")
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    @Schema(description = "Приоритет задачи", example = "LOW, MEDIUM, HIGH")
     @Column(name = "priority")
     @Enumerated(EnumType.STRING)
     private Priority priority;
 
+    @Schema(description = "Комментарии к задаче")
     @Column(name = "comments")
     private String comments;
 
@@ -53,6 +59,7 @@ public class Task {
     @JoinColumn(name = "author_id")
     private User author;
 
+    @Schema(description = "Исполнитель задачи. Идентифицируется по email")
     @Column(name = "executor")
     private String executor;
 

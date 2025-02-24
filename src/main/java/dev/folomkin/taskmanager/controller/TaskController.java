@@ -95,7 +95,7 @@ public class TaskController {
     }
 
 
-    @Operation(summary = "Получение одной задачи", description = "Необходимо указать id задачи")
+    @Operation(summary = "Получение задачи по id", description = "Необходимо указать id задачи")
     @GetMapping("/task/{taskId}")
     public ResponseEntity<Task> getTask(@PathVariable("taskId")
                                         @Parameter(description = "Идентификатор задачи",
@@ -104,7 +104,7 @@ public class TaskController {
     }
 
 
-    @Operation(summary = "Создание задачи")
+    @Operation(summary = "Создание задачи",description = "Исполнитель назначается по email")
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/create-task")
     public ResponseEntity<Task> create(@Valid @RequestBody TaskSaveDto taskSaveDto, @AuthenticationPrincipal User user) {
@@ -137,8 +137,10 @@ public class TaskController {
     public ResponseEntity<Task> updateStatusTask(@PathVariable("taskId")
                                                  @Parameter(description = "Идентификатор задачи",
                                                          required = true) Long taskId,
-                                                 @Valid @RequestBody TaskDto taskDto) {
-        return ResponseEntity.ok(taskService.updateStatusTask(taskId, taskDto));
+                                                 @Valid @RequestBody TaskDto taskDto,
+                                                 @AuthenticationPrincipal User user
+    ) {
+        return ResponseEntity.ok(taskService.updateStatusTask(taskId, taskDto, user));
     }
 
     @Operation(summary = "Обновление приоритета задачи", description = "Необходимо указать id задачи")

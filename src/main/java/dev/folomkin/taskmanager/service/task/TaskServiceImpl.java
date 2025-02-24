@@ -75,7 +75,12 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public Task updateStatusTask(Long taskId, TaskDto taskDto) {
+    public Task updateStatusTask(Long taskId, TaskDto taskDto, User user) {
+        // FIXME: пользователь может менять статус если указан как исполнитель
+
+
+
+
         Task changedTask = getById(taskId);
         changedTask.setStatus(taskDto.getStatus());
         taskRepository.save(changedTask);
