@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class TaskServiceImpl implements TaskService {
@@ -35,6 +34,10 @@ public class TaskServiceImpl implements TaskService {
         this.taskMapper = taskMapper;
     }
 
+    @Override
+    public List<Task> getTasks() {
+        return taskRepository.findAll();
+    }
 
     @Override
     public Page<Task> getAllTasks(PageRequest request) {
@@ -48,13 +51,13 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional
-    public Task create(TaskSaveDto taskSaveDto) {
-        Long userId = taskSaveDto.getUserId();
-        Optional<User> user = Optional.ofNullable(userService.getUserById(userId).orElseThrow(
-                () -> new ResourceNotFoundException("Пользователь с id " + userId + " не найден")
-        ));
-        Task task = taskMapper.map(taskSaveDto);
-        task.setUser(user.get());
+    public Task create(TaskSaveDto taskSaveDto, User user) {
+//        Long userId = taskSaveDto.getUserId();
+//        Optional<User> user = Optional.ofNullable(userService.getUserById(userId).orElseThrow(
+//                () -> new ResourceNotFoundException("Пользователь с id " + userId + " не найден")
+//        ));
+        Task task = taskMapper.map(taskSaveDto, user);
+//        task.setCustomer(user);
         taskRepository.save(task);
         return task;
     }
@@ -62,7 +65,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public List<Task> getAllUserTasks(Long userId) {
-        return taskRepository.findTaskByUserId(userId);
+        return taskRepository.findTaskByAuthorId(userId);
     }
 
     @Override

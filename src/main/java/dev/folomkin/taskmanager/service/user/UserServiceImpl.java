@@ -6,7 +6,6 @@ import dev.folomkin.taskmanager.domain.model.Role;
 import dev.folomkin.taskmanager.domain.model.User;
 import dev.folomkin.taskmanager.exceptions.ForbiddenInvalidFieldException;
 import dev.folomkin.taskmanager.repository.UserRepository;
-import jakarta.validation.constraints.NotBlank;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -30,7 +28,22 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public Page<UserResponseDto> findAll(PageRequest request) {
+    public List<User> findAll() {
+        return userRepository.findAll();
+    }
+
+//    @Override
+//    public Page<UserResponseDto> findAllByFilter(PageRequest request) {
+//        return new PageImpl<>(userRepository
+//                .findAll(request)
+//                .stream()
+//                .map(UserMapper::toUserDto)
+//                .toList());
+//    }
+
+
+    @Override
+    public Page<UserResponseDto> findAllByFilter(PageRequest request) {
         return new PageImpl<>(userRepository
                 .findAll(request)
                 .stream()

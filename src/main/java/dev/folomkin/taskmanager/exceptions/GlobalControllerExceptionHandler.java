@@ -37,12 +37,12 @@ public class GlobalControllerExceptionHandler extends ResponseEntityExceptionHan
 
 
     @ExceptionHandler(value =  ForbiddenInvalidFieldException.class)
-    @ResponseStatus(value = HttpStatus.FORBIDDEN)
+    @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
     protected ResponseEntity<ErrorMessage> taskNotFound(ForbiddenInvalidFieldException ex, WebRequest request) {
         return ResponseEntity
-                .status(HttpStatus.FORBIDDEN)
+                .status(HttpStatus.UNAUTHORIZED)
                 .body(new ErrorMessage(
-                        HttpStatus.FORBIDDEN.value(),
+                        HttpStatus.UNAUTHORIZED.value(),
                         new Date(),
                         ex.getMessage(),
                         request.getDescription(false)));

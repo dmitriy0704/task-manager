@@ -5,6 +5,7 @@ import dev.folomkin.taskmanager.domain.model.Status;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,6 +14,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class TaskSaveDto {
 
     @NotBlank
@@ -32,14 +34,17 @@ public class TaskSaveDto {
 
     @Schema(description = "Комментарии к задаче")
     private String comments;
+//
+//    @NotBlank
+//    @Schema(description = "Автор задачи. Идентифицируется по email")
+//    private String author;
 
     @NotBlank
     @Schema(description = "Исполнитель задачи. Идентифицируется по email")
     private String executor;
 
-    @Schema(description = "Автор задачи")
-    private String author;
 
-    @NotNull(message = "Поле не должно быть пустым")
-    private Long userId;
+
+//    @NotNull(message = "Поле не должно быть пустым")
+//    private Long userId;
 }

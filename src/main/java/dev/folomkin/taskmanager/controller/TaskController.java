@@ -19,10 +19,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @Tag(name = "Управление задачами", description = "Для авторизованных пользователей")
 @RestController
@@ -37,8 +39,46 @@ public class TaskController {
         this.userService = userService;
     }
 
+
+    //=== Users ====/
+    @Operation(summary = "Получение пользователя по id", description = "Только для авторизованных пользователей")
+    @GetMapping("/user/{userId}")
+    public Optional<User> getUser(@PathVariable("userId")
+                                  @Parameter(description = "Идентификатор пользователя", required = true)
+                                  Long userId) {
+        return userService.getUserById(userId);
+    }
+
+    @Operation(summary = "Получение списка всех пользователей", description = "Только для авторизованных пользователей")
+    @GetMapping("/users")
+    public List<User> getUsers() {
+        return userService.findAll();
+    }
+
+    @Operation(summary = "Получение списка всех пользователей постранично", description = "Только для авторизованных пользователей")
+    @GetMapping("/filter-users")
+    public Page<UserResponseDto> filterUser(
+            @RequestParam(value = "offset", defaultValue = "0")
+            @Min(0) @Parameter(description = "Номер страницы с результатом") Integer offset,
+            @RequestParam(value = "limit", defaultValue = "10") @Min(1) @Max(50)
+            @Parameter(description = "Количество выводимых пользователей на странице. Минимум 1, максимум 50") Integer limit,
+            @RequestParam(value = "sort") @Parameter(description = "Поле сортировки") String sortField
+    ) {
+        PageRequest pageRequest = PageRequest.of(offset, limit, Sort.by(Sort.Direction.ASC, sortField));
+        return userService.findAllByFilter(pageRequest);
+    }
+
+
+    //=== Tasks ===//
     @Operation(summary = "Получение списка всех задач", description = "Только для авторизованных пользователей")
     @GetMapping("/tasks")
+    public List<Task> getTasks() {
+        return taskService.getTasks();
+    }
+
+
+    @Operation(summary = "Получение списка всех задач постранично", description = "Только для авторизованных пользователей")
+    @GetMapping("/filter-tasks")
     public Page<Task> filterTasks(
             @RequestParam(value = "offset", defaultValue = "0")
             @Min(0) @Parameter(description = "Номер страницы с результатом") Integer offset,
@@ -51,20 +91,6 @@ public class TaskController {
     }
 
 
-    @Operation(summary = "Получение списка всех пользователей", description = "Только для авторизованных пользователей")
-    @GetMapping("/users")
-    public Page<UserResponseDto> filterUser(
-            @RequestParam(value = "offset", defaultValue = "0")
-            @Min(0) @Parameter(description = "Номер страницы с результатом") Integer offset,
-            @RequestParam(value = "limit", defaultValue = "10") @Min(1) @Max(50)
-            @Parameter(description = "Количество выводимых пользователей на странице. Минимум 1, максимум 50") Integer limit,
-            @RequestParam(value = "sort") @Parameter(description = "Поле сортировки") String sortField
-    ) {
-        PageRequest pageRequest = PageRequest.of(offset, limit, Sort.by(Sort.Direction.ASC, sortField));
-        return userService.findAll(pageRequest);
-    }
-
-
     @Operation(summary = "Получение одной задачи", description = "Необходимо указать id задачи")
     @GetMapping("/task/{taskId}")
     public ResponseEntity<Task> getTask(@PathVariable("taskId")
@@ -73,11 +99,12 @@ public class TaskController {
         return ResponseEntity.ok().body(taskService.getTask(taskId));
     }
 
+
     @Operation(summary = "Создание задачи")
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/create-task")
-    public ResponseEntity<Task> create(@Valid @RequestBody TaskSaveDto taskSaveDto) {
-        Task task = taskService.create(taskSaveDto);
+    public ResponseEntity<Task> create(@Valid @RequestBody TaskSaveDto taskSaveDto, @AuthenticationPrincipal User user) {
+        Task task = taskService.create(taskSaveDto, user);
         return new ResponseEntity<>(task, HttpStatus.CREATED);
     }
 
@@ -97,7 +124,7 @@ public class TaskController {
                                              @Parameter(description = "Идентификатор задачи",
                                                      required = true) Long taskId) {
         taskService.deleteTask(taskId);
-        return new ResponseEntity<>("Задача успешно удалена", HttpStatus.OK);
+        return new ResponseEntity<>("Задача успешно удалена", HttpStatus.NO_CONTENT);
     }
 
 

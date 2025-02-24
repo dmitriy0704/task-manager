@@ -3,14 +3,16 @@ package dev.folomkin.taskmanager.service.task;
 import dev.folomkin.taskmanager.domain.dto.task.TaskDto;
 import dev.folomkin.taskmanager.domain.dto.task.TaskSaveDto;
 import dev.folomkin.taskmanager.domain.model.Task;
+import dev.folomkin.taskmanager.domain.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
 
 public interface TaskService {
-    Task create(TaskSaveDto taskSaveDto);
+    Task create(TaskSaveDto taskSaveDto, User user);
 
+    List<Task> getTasks();
     Page<Task> getAllTasks(PageRequest request);
 
     Task getTask(Long id);
