@@ -36,9 +36,23 @@ public class GlobalControllerExceptionHandler extends ResponseEntityExceptionHan
     }
 
 
-    @ExceptionHandler(value =  ForbiddenInvalidFieldException.class)
+
+    @ExceptionHandler(value =  ChangeTaskAccessDeniedException.class)
+    @ResponseStatus(value = HttpStatus.FORBIDDEN)
+    protected ResponseEntity<ErrorMessage> changeTaskAccessDenied(ChangeTaskAccessDeniedException ex, WebRequest request) {
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(new ErrorMessage(
+                        HttpStatus.FORBIDDEN.value(),
+                        new Date(),
+                        ex.getMessage(),
+                        request. getDescription(false)));
+    }
+
+
+    @ExceptionHandler(value =  AuthorizeDublicateUserException.class)
     @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
-    protected ResponseEntity<ErrorMessage> taskNotFound(ForbiddenInvalidFieldException ex, WebRequest request) {
+    protected ResponseEntity<ErrorMessage> taskNotFound(AuthorizeDublicateUserException ex, WebRequest request) {
         return ResponseEntity
                 .status(HttpStatus.UNAUTHORIZED)
                 .body(new ErrorMessage(

@@ -4,7 +4,7 @@ import dev.folomkin.taskmanager.domain.dto.user.UserResponseDto;
 import dev.folomkin.taskmanager.domain.mapper.UserMapper;
 import dev.folomkin.taskmanager.domain.model.Role;
 import dev.folomkin.taskmanager.domain.model.User;
-import dev.folomkin.taskmanager.exceptions.ForbiddenInvalidFieldException;
+import dev.folomkin.taskmanager.exceptions.AuthorizeDublicateUserException;
 import dev.folomkin.taskmanager.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -31,16 +31,6 @@ public class UserServiceImpl implements UserService {
     public List<User> findAll() {
         return userRepository.findAll();
     }
-
-//    @Override
-//    public Page<UserResponseDto> findAllByFilter(PageRequest request) {
-//        return new PageImpl<>(userRepository
-//                .findAll(request)
-//                .stream()
-//                .map(UserMapper::toUserDto)
-//                .toList());
-//    }
-
 
     @Override
     public Page<UserResponseDto> findAllByFilter(PageRequest request) {
@@ -75,13 +65,11 @@ public class UserServiceImpl implements UserService {
      */
     public User create(User user) {
         if (userRepository.existsByUsername(user.getUsername())) {
-            throw new ForbiddenInvalidFieldException("Пользователь с таким именем уже существует");
+            throw new AuthorizeDublicateUserException("Пользователь с таким именем уже существует");
         }
-
         if (userRepository.existsByEmail(user.getEmail())) {
-            throw new ForbiddenInvalidFieldException("Пользователь с таким email уже существует");
+            throw new AuthorizeDublicateUserException("Пользователь с таким email уже существует");
         }
-
         return save(user);
     }
 

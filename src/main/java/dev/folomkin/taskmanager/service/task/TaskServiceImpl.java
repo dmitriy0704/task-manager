@@ -3,6 +3,7 @@ package dev.folomkin.taskmanager.service.task;
 import dev.folomkin.taskmanager.domain.dto.task.TaskDto;
 import dev.folomkin.taskmanager.domain.dto.task.TaskSaveDto;
 import dev.folomkin.taskmanager.domain.mapper.TaskMapper;
+import dev.folomkin.taskmanager.domain.model.Role;
 import dev.folomkin.taskmanager.domain.model.Task;
 import dev.folomkin.taskmanager.domain.model.User;
 import dev.folomkin.taskmanager.exceptions.ResourceNotFoundException;
@@ -52,14 +53,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     @Transactional
     public Task create(TaskSaveDto taskSaveDto, User user) {
-//        Long userId = taskSaveDto.getUserId();
-//        Optional<User> user = Optional.ofNullable(userService.getUserById(userId).orElseThrow(
-//                () -> new ResourceNotFoundException("Пользователь с id " + userId + " не найден")
-//        ));
-        Task task = taskMapper.map(taskSaveDto, user);
-//        task.setCustomer(user);
-        taskRepository.save(task);
-        return task;
+        return taskRepository.save(taskMapper.map(taskSaveDto, user));
     }
 
 
@@ -72,19 +66,6 @@ public class TaskServiceImpl implements TaskService {
     @Transactional
     public void deleteTask(Long taskId) {
         taskRepository.delete(getById(taskId));
-    }
-
-    @Override
-    public Task updateStatusTask(Long taskId, TaskDto taskDto, User user) {
-        // FIXME: пользователь может менять статус если указан как исполнитель
-
-
-
-
-        Task changedTask = getById(taskId);
-        changedTask.setStatus(taskDto.getStatus());
-        taskRepository.save(changedTask);
-        return changedTask;
     }
 
 
@@ -104,6 +85,19 @@ public class TaskServiceImpl implements TaskService {
         return changedTask;
     }
 
+
+    @Override
+    public Task updateStatusTask(Long taskId, TaskDto taskDto, User user) {
+        Task changedTask = getById(taskId);
+        if (isAccessAllowed(changedTask, user)) {
+            changedTask.setStatus(taskDto.getStatus());
+            taskRepository.save(changedTask);
+            return changedTask;
+        }
+        return null;
+    }
+
+
     @Override
     public Task updateCommentsTask(Long taskId, TaskDto taskDto) {
         Task changedTask = getById(taskId);
@@ -112,6 +106,13 @@ public class TaskServiceImpl implements TaskService {
         return changedTask;
     }
 
+    public boolean isAccessAllowed(Task taskToChange, User user) {
+        boolean isExecutor = taskToChange.getExecutor().equalsIgnoreCase(user.getEmail());
+        if ((isExecutor && user.getRole() == Role.ROLE_USER) || user.getRole() == Role.ROLE_ADMIN) {
+            return true;
+        }
+        return false;
+    }
 
     private Task getById(Long id) {
         return taskRepository.findById(id)

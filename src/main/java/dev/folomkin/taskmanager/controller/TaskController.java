@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -33,10 +34,12 @@ import java.util.Optional;
 public class TaskController {
     private final TaskService taskService;
     private final UserService userService;
+    private final MessageSource messageSource;
 
-    public TaskController(TaskService taskService, UserService userService) {
+    public TaskController(TaskService taskService, UserService userService, MessageSource messageSource) {
         this.taskService = taskService;
         this.userService = userService;
+        this.messageSource = messageSource;
     }
 
 
@@ -71,7 +74,6 @@ public class TaskController {
     }
 
 
-
     //=== Tasks ===//
     @Operation(summary = "Получение списка всех задач", description = "Только для авторизованных пользователей")
     @PreAuthorize("hasRole('ADMIN')")
@@ -104,16 +106,18 @@ public class TaskController {
     }
 
 
-    @Operation(summary = "Создание задачи",description = "Исполнитель назначается по email")
+    @Operation(summary = "Создание задачи", description = "Исполнитель назначается по email")
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/create-task")
-    public ResponseEntity<Task> create(@Valid @RequestBody TaskSaveDto taskSaveDto, @AuthenticationPrincipal User user) {
+    public ResponseEntity<Task> create(@Valid @RequestBody TaskSaveDto taskSaveDto,
+                                       @AuthenticationPrincipal User user) {
         Task task = taskService.create(taskSaveDto, user);
         return new ResponseEntity<>(task, HttpStatus.CREATED);
     }
 
 
-    @Operation(summary = "Получение списка задач пользователя", description = "Поиск по id")
+    @Operation(summary = "Получение списка задач пользователя",
+            description = "Поиск по id")
     @GetMapping("/task-user/{userId}")
     public ResponseEntity<List<Task>> getTaskByUserId(@PathVariable("userId")
                                                       @Parameter(description = "Идентификатор пользователя",
@@ -132,17 +136,6 @@ public class TaskController {
     }
 
 
-    @Operation(summary = "Обновление статуса задачи", description = "Необходимо указать id задачи")
-    @PatchMapping("/update-status/{taskId}")
-    public ResponseEntity<Task> updateStatusTask(@PathVariable("taskId")
-                                                 @Parameter(description = "Идентификатор задачи",
-                                                         required = true) Long taskId,
-                                                 @Valid @RequestBody TaskDto taskDto,
-                                                 @AuthenticationPrincipal User user
-    ) {
-        return ResponseEntity.ok(taskService.updateStatusTask(taskId, taskDto, user));
-    }
-
     @Operation(summary = "Обновление приоритета задачи", description = "Необходимо указать id задачи")
     @PatchMapping("/update-priority/{taskId}")
     public ResponseEntity<Task> updatePriorityTask(@PathVariable("taskId")
@@ -160,6 +153,24 @@ public class TaskController {
                                                               required = true) Long taskId,
                                                       @Valid @RequestBody TaskDto taskDto) {
         return ResponseEntity.ok(taskService.updateDescriptionTask(taskId, taskDto));
+    }
+
+
+    @Operation(summary = "Обновление статуса задачи", description = "Необходимо указать id задачи")
+    @PatchMapping("/update-status/{taskId}")
+    public ResponseEntity<?> updateStatusTask(@PathVariable("taskId")
+                                              @Parameter(description = "Идентификатор задачи",
+                                                      required = true) Long taskId,
+                                              @Valid @RequestBody TaskDto taskDto,
+                                              @AuthenticationPrincipal User user) {
+        Task task = taskService.updateStatusTask(taskId, taskDto, user);
+        if (task == null) {
+            return new ResponseEntity<>(
+                    messageSource.getMessage("errors.task.accessDenied", new Object[0], null),
+                    HttpStatus.FORBIDDEN
+            );
+        }
+        return ResponseEntity.ok().body(task);
     }
 
 
