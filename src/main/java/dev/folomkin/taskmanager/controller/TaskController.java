@@ -41,13 +41,7 @@ public class TaskController {
 
 
     //=== Users ====/
-    @Operation(summary = "Получение пользователя по id", description = "Только для авторизованных пользователей")
-    @GetMapping("/user/{userId}")
-    public Optional<User> getUser(@PathVariable("userId")
-                                  @Parameter(description = "Идентификатор пользователя", required = true)
-                                  Long userId) {
-        return userService.getUserById(userId);
-    }
+
 
     @Operation(summary = "Получение списка всех пользователей", description = "Только для авторизованных пользователей")
     @GetMapping("/users")
@@ -68,9 +62,19 @@ public class TaskController {
         return userService.findAllByFilter(pageRequest);
     }
 
+    @Operation(summary = "Получение пользователя по id", description = "Только для авторизованных пользователей")
+    @GetMapping("/user/{userId}")
+    public Optional<User> getUser(@PathVariable("userId")
+                                  @Parameter(description = "Идентификатор пользователя", required = true)
+                                  Long userId) {
+        return userService.getUserById(userId);
+    }
+
+
 
     //=== Tasks ===//
     @Operation(summary = "Получение списка всех задач", description = "Только для авторизованных пользователей")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/tasks")
     public List<Task> getTasks() {
         return taskService.getTasks();
@@ -119,7 +123,7 @@ public class TaskController {
 
     @Operation(summary = "Удаление задачи", description = "Необходимо указать id задачи")
     @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("/delete/{taskId}")
+    @DeleteMapping("/task-delete/{taskId}")
     public ResponseEntity<String> deleteTask(@PathVariable("taskId")
                                              @Parameter(description = "Идентификатор задачи",
                                                      required = true) Long taskId) {
@@ -143,7 +147,7 @@ public class TaskController {
                                                    @Parameter(description = "Идентификатор задачи",
                                                            required = true) Long taskId,
                                                    @Valid @RequestBody TaskDto taskDto) {
-        return ResponseEntity.ok(taskService.updateStatusTask(taskId, taskDto));
+        return ResponseEntity.ok(taskService.updatePriorityTask(taskId, taskDto));
     }
 
 
@@ -153,7 +157,7 @@ public class TaskController {
                                                       @Parameter(description = "Идентификатор задачи",
                                                               required = true) Long taskId,
                                                       @Valid @RequestBody TaskDto taskDto) {
-        return ResponseEntity.ok(taskService.updateStatusTask(taskId, taskDto));
+        return ResponseEntity.ok(taskService.updateDescriptionTask(taskId, taskDto));
     }
 
 
@@ -163,7 +167,7 @@ public class TaskController {
                                                    @Parameter(description = "Идентификатор задачи",
                                                            required = true) Long taskId,
                                                    @Valid @RequestBody TaskDto taskDto) {
-        return ResponseEntity.ok(taskService.updateStatusTask(taskId, taskDto));
+        return ResponseEntity.ok(taskService.updateCommentsTask(taskId, taskDto));
     }
 
 

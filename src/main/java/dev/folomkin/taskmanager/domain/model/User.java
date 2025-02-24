@@ -43,7 +43,7 @@ public class User implements UserDetails {
     private Role role;
 
 
-    @OneToMany(mappedBy = "author", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
     private List<Task> tasks = new ArrayList<>();
 
     public User(Long id, String username, String password, String email, Date createDate, Role role) {
