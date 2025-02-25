@@ -6,7 +6,7 @@ import dev.folomkin.taskmanager.domain.mapper.TaskMapper;
 import dev.folomkin.taskmanager.domain.model.Role;
 import dev.folomkin.taskmanager.domain.model.Task;
 import dev.folomkin.taskmanager.domain.model.User;
-import dev.folomkin.taskmanager.exceptions.ResourceNotFoundException;
+import dev.folomkin.taskmanager.exceptions.NoSuchElementException;
 import dev.folomkin.taskmanager.repository.TaskRepository;
 import dev.folomkin.taskmanager.service.user.UserService;
 import org.springframework.context.MessageSource;
@@ -37,11 +37,17 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public List<Task> getTasks() {
+        if (taskRepository.findAll().isEmpty()) {
+            throw new NoSuchElementException(messageSource.getMessage("errors.404.taskList", new Object[0], null));
+        }
         return taskRepository.findAll();
     }
 
     @Override
-    public Page<Task> getAllTasks(PageRequest request) {
+    public Page<Task> getAllTasksWithFilter(PageRequest request) {
+        if (taskRepository.findAll(request).isEmpty()) {
+            throw new NoSuchElementException(messageSource.getMessage("errors.404.taskList", new Object[0], null));
+        }
         return taskRepository.findAll(request);
     }
 
@@ -116,7 +122,7 @@ public class TaskServiceImpl implements TaskService {
 
     private Task getById(Long id) {
         return taskRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(
+                .orElseThrow(() -> new NoSuchElementException(
                         messageSource.getMessage("errors.404.task", new Object[0], null)));
     }
 

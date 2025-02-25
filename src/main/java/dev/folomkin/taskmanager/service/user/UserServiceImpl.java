@@ -5,13 +5,15 @@ import dev.folomkin.taskmanager.domain.mapper.UserMapper;
 import dev.folomkin.taskmanager.domain.model.Role;
 import dev.folomkin.taskmanager.domain.model.User;
 import dev.folomkin.taskmanager.exceptions.AuthorizeDublicateUserException;
+import dev.folomkin.taskmanager.exceptions.NoSuchElementException;
+import dev.folomkin.taskmanager.exceptions.UserNotFoundException;
 import dev.folomkin.taskmanager.repository.UserRepository;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,14 +23,23 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final MessageSource messageSource;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository,
+                           MessageSource messageSource) {
         this.userRepository = userRepository;
+        this.messageSource = messageSource;
     }
 
 
     @Override
     public List<User> findAll() {
+        if (userRepository.findAll().isEmpty()) {
+            throw new NoSuchElementException(
+                    messageSource
+                            .getMessage("errors.404.userList", new Object[0], null)
+            );
+        }
         return userRepository.findAll();
     }
 
@@ -44,7 +55,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<User> getUserById(Long userId) {
-        return userRepository.findById(userId);
+        return Optional.ofNullable(userRepository.findById(userId).orElseThrow(
+                () -> new NoSuchElementException(
+                        messageSource.getMessage("errors.404.user", new Object[0], null)
+                )
+        ));
     }
 
 
@@ -80,7 +95,7 @@ public class UserServiceImpl implements UserService {
      */
     public User getByUsername(String username) {
         return userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден"));
+                .orElseThrow(() -> new UserNotFoundException("Пользователь не найден"));
 
     }
 
