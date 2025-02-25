@@ -61,14 +61,9 @@ class TaskControllerTest {
     private TaskRepository taskRepository;
 
 
-    // TODO: Протестировать авторизацию
-
-
-
-
     @DisplayName("Получение пользователя по id авторизованным пользователем")
     @Test
-    @WithMockUser
+    @WithMockUser(username = "username", roles={"ADMIN"})
     void getUserWithAuthorized() throws Exception {
         when(userRepository.findById(1L))
                 .thenReturn(Optional.of(new User(
@@ -77,9 +72,9 @@ class TaskControllerTest {
                         "password",
                         "email@email.com",
                         new Date(),
-                        null
+                        Role.ROLE_USER
                 )));
-        mockMvc.perform(get("/api/v1/user/{userId}", 1L))
+        mockMvc.perform(get("/api/v1/get-user/{userId}", 1L))
                 .andExpect(status().isOk());
     }
 
@@ -87,14 +82,14 @@ class TaskControllerTest {
     @Test
     @WithAnonymousUser
     void cannotGetCustomerIfNotAuthorized() throws Exception {
-        mockMvc.perform(get("/api/v1/user/{userId}", 1L))
+        mockMvc.perform(get("/api/v1/get-user/{userId}", 1L))
                 .andExpect(status().isUnauthorized());
     }
 
     @DisplayName("Удаление задачи по id авторизованным пользователем")
     @Test
     void adminCanDeleteCustomer() throws Exception {
-        mockMvc.perform(delete("/api/v1/delete/{taskId}", 1L)
+        mockMvc.perform(delete("/api/v1/delete-task/{taskId}", 1L)
                 .with(csrf())
                 .with(user("admin").roles("ADMIN"))
         ).andExpect(status().isNoContent());
@@ -103,7 +98,7 @@ class TaskControllerTest {
     @DisplayName("Удаление задачи по id неавторизованным пользователем")
     @Test
     void cannotDeleteCustomerIfNotAuthorized() throws Exception {
-        mockMvc.perform(delete("/api/v1/delete/{taskId}", 1L)
+        mockMvc.perform(delete("/api/v1/delete-task/{taskId}", 1L)
                 .with(csrf())
                 .with(anonymous())
         ).andExpect(status().isUnauthorized());
@@ -111,7 +106,7 @@ class TaskControllerTest {
 
     @DisplayName("Получение задачи по id авторизованным пользователем")
     @Test
-    @WithMockUser
+    @WithMockUser(username = "username", roles={"ADMIN"})
     void getTasksAuthUser() throws Exception {
         User user1 = new User();
         user1.setId(1L);
@@ -134,7 +129,7 @@ class TaskControllerTest {
                         "user@mail.ru"
 
                 )));
-        mockMvc.perform(get("/api/v1/task/{taskId}", 1L))
+        mockMvc.perform(get("/api/v1/get-task/{taskId}", 1L))
                 .andExpect(status().isOk());
     }
 
@@ -162,7 +157,7 @@ class TaskControllerTest {
                         user1,
                         "user@mail.ru"
                 )));
-        mockMvc.perform(get("/api/v1/task/{taskId}", 1L)
+        mockMvc.perform(get("/api/v1/get-task/{taskId}", 1L)
                         .with(anonymous()))
                 .andExpect(status().isUnauthorized());
     }
@@ -201,8 +196,7 @@ class TaskControllerTest {
         when(this.taskService.create(taskSaveDto, null)).thenReturn(tsd1);
         mockMvc.perform(post("/api/v1/create-task")
                         .with(csrf())
-                        .with(user("admin")
-                                .roles("ADMIN"))
+                        .with(user("admin").roles("ADMIN"))
                         .contentType("application/json")
                         .content(mapper.writeValueAsString(taskSaveDto)))
                 .andExpect(status().isCreated());
@@ -252,7 +246,7 @@ class TaskControllerTest {
     @DisplayName("Просмотр списка задач авторизованным пользователем")
     @Test
     void findAllShouldReturnAllTasksAuthUser() throws Exception {
-        mockMvc.perform(get("/api/v1/tasks")
+        mockMvc.perform(get("/api/v1/get-tasks")
                 .with(csrf())
                 .with(user("admin").roles("ADMIN"))
         ).andExpect(status().isOk());
@@ -261,7 +255,7 @@ class TaskControllerTest {
     @DisplayName("Просмотр списка задач неавторизованным пользователе")
     @Test
     void findAllShouldReturnAllTasksNoAuthUser() throws Exception {
-        mockMvc.perform(get("/api/v1/tasks")
+        mockMvc.perform(get("/api/v1/get-tasks")
                 .with(csrf())
                 .with(anonymous())
         ).andExpect(status().isUnauthorized());

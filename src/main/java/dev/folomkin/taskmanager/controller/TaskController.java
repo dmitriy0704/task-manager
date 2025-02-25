@@ -22,10 +22,14 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Tag(name = "Управление задачами", description = "Для авторизованных пользователей")
@@ -85,6 +89,7 @@ public class TaskController {
 
 
     @Operation(summary = "Получение списка всех задач постранично", description = "Только для авторизованных пользователей")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(value = "/filter-tasks", produces = MediaType.APPLICATION_JSON_VALUE)
     public Page<Task> filterTasks(
             @RequestParam(value = "offset", defaultValue = "0")
@@ -97,32 +102,31 @@ public class TaskController {
         return taskService.getAllTasksWithFilter(pageRequest);
     }
 
-
     @Operation(summary = "Получение задачи по id", description = "Необходимо указать id задачи")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(value = "/get-task/{taskId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Task getTask(@PathVariable("taskId")
                         @Parameter(description = "Идентификатор задачи", required = true) Long taskId) {
         return taskService.getTask(taskId);
     }
 
-
     @Operation(summary = "Создание задачи", description = "Исполнитель назначается по email")
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(value = "/create-task", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Task> create(@Valid @RequestBody TaskSaveDto taskSaveDto,
+    public ResponseEntity<?> create(@Valid @RequestBody TaskSaveDto taskSaveDto,
                                        @AuthenticationPrincipal User user) {
         Task task = taskService.create(taskSaveDto, user);
         return new ResponseEntity<>(task, HttpStatus.CREATED);
     }
 
-
     @Operation(summary = "Получение списка задач пользователя",
             description = "Поиск по id")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(value = "/user-task/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Task>> getTaskByUserId(@PathVariable("userId")
+    public List<Task> getTaskByUserId(@PathVariable("userId")
                                                       @Parameter(description = "Идентификатор пользователя",
                                                               required = true) Long userId) {
-        return ResponseEntity.ok().body(taskService.getAllUserTasks(userId));
+        return taskService.getAllUserTasks(userId);
     }
 
     @Operation(summary = "Удаление задачи", description = "Необходимо указать id задачи")
@@ -182,5 +186,18 @@ public class TaskController {
                                                            required = true) Long taskId,
                                                    @Valid @RequestBody TaskDto taskDto) {
         return ResponseEntity.ok(taskService.updateCommentsTask(taskId, taskDto));
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Map<String, String> handleValidationExceptions(
+            MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+        return errors;
     }
 }

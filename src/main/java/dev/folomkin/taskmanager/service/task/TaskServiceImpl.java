@@ -6,8 +6,10 @@ import dev.folomkin.taskmanager.domain.mapper.TaskMapper;
 import dev.folomkin.taskmanager.domain.model.Role;
 import dev.folomkin.taskmanager.domain.model.Task;
 import dev.folomkin.taskmanager.domain.model.User;
+import dev.folomkin.taskmanager.exceptions.InvalidTaskFieldException;
 import dev.folomkin.taskmanager.exceptions.NoSuchElementException;
 import dev.folomkin.taskmanager.repository.TaskRepository;
+import dev.folomkin.taskmanager.repository.UserRepository;
 import dev.folomkin.taskmanager.service.user.UserService;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TaskServiceImpl implements TaskService {
@@ -24,15 +27,17 @@ public class TaskServiceImpl implements TaskService {
     private final MessageSource messageSource;
     private final UserService userService;
     private final TaskMapper taskMapper;
+    private final UserRepository userRepository;
 
     public TaskServiceImpl(TaskRepository taskRepository,
                            MessageSource messageSource,
                            UserService userService,
-                           TaskMapper taskMapper) {
+                           TaskMapper taskMapper, UserRepository userRepository) {
         this.taskRepository = taskRepository;
         this.messageSource = messageSource;
         this.userService = userService;
         this.taskMapper = taskMapper;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -59,12 +64,24 @@ public class TaskServiceImpl implements TaskService {
     @Override
     @Transactional
     public Task create(TaskSaveDto taskSaveDto, User user) {
-        return taskRepository.save(taskMapper.map(taskSaveDto, user));
+        Task task = taskRepository.findByTitle(taskSaveDto.getTitle());
+        if (task == null) {
+            return taskRepository.save(taskMapper.map(taskSaveDto, user));
+        }
+        throw new InvalidTaskFieldException(messageSource.getMessage("errors.400.dublicateTask", new Object[0], null));
     }
 
 
     @Override
     public List<Task> getAllUserTasks(Long userId) {
+        Optional<User> user = Optional.ofNullable(userService.getUserById(userId).orElseThrow(
+                () -> new NoSuchElementException(messageSource.getMessage("errors.404.user", new Object[0], null))
+        ));
+
+        List<Task> userTasks = taskRepository.findTaskByAuthorId(user.get().getId());
+        if (userTasks.isEmpty()) {
+            throw new NoSuchElementException(messageSource.getMessage("errors.404.user.tasks", new Object[0], null));
+        }
         return taskRepository.findTaskByAuthorId(userId);
     }
 

@@ -2,6 +2,7 @@ package dev.folomkin.taskmanager.domain.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -19,7 +20,7 @@ public class Task {
     private Long id;
 
     @Schema(description = "Заголовок задачи")
-    @Column(name = "title", nullable = false, unique = true)
+    @Column(name = "title")
     private String title;
 
     @Schema(description = "Описание задачи")

@@ -34,6 +34,33 @@ public class GlobalControllerExceptionHandler extends ResponseEntityExceptionHan
     }
 
 
+    @ExceptionHandler(value = InvalidTaskFieldException.class)
+    public ProblemDetail handleInvalidTaskException(InvalidTaskFieldException e, WebRequest request) {
+        ProblemDetail problemDetail = ProblemDetail
+                .forStatusAndDetail(
+                        HttpStatus.BAD_REQUEST,
+                        e.getMessage());
+        problemDetail.setTitle(messageSource.getMessage("errors.400.problemDetailsTitle", new Object[0], null));
+        problemDetail.setDetail(e.getMessage());
+        return problemDetail;
+    }
+
+    @ExceptionHandler(value = AuthorizeDublicateUserException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    protected ProblemDetail taskNotFound(AuthorizeDublicateUserException ex, WebRequest request) {
+        ProblemDetail problemDetail = ProblemDetail
+                .forStatusAndDetail(
+                        HttpStatus.BAD_REQUEST,
+                        ex.getMessage());
+        problemDetail.setTitle(messageSource.getMessage("errors.400.problemDetailsTitle", new Object[0], null));
+        problemDetail.setDetail(ex.getMessage());
+        return problemDetail;
+    }
+
+
+
+//============//
+
     @ExceptionHandler(value = UserNotFoundException.class)
     @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
     protected ResponseEntity<ErrorMessage> usernameNotFound(UserNotFoundException ex, WebRequest request) {
@@ -58,16 +85,5 @@ public class GlobalControllerExceptionHandler extends ResponseEntityExceptionHan
                         request.getDescription(false)));
     }
 
-    @ExceptionHandler(value = AuthorizeDublicateUserException.class)
-    @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
-    protected ResponseEntity<ErrorMessage> taskNotFound(AuthorizeDublicateUserException ex, WebRequest request) {
-        return ResponseEntity
-                .status(HttpStatus.UNAUTHORIZED)
-                .body(new ErrorMessage(
-                        HttpStatus.UNAUTHORIZED.value(),
-                        new Date(),
-                        ex.getMessage(),
-                        request.getDescription(false)));
-    }
 
 }
