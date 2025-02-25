@@ -37,8 +37,6 @@ public class TaskControllerIT {
     }
 
 
-
-
     @DisplayName("Получение списка всех задач")
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})

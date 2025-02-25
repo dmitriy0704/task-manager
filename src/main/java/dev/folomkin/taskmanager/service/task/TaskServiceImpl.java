@@ -6,6 +6,7 @@ import dev.folomkin.taskmanager.domain.mapper.TaskMapper;
 import dev.folomkin.taskmanager.domain.model.Role;
 import dev.folomkin.taskmanager.domain.model.Task;
 import dev.folomkin.taskmanager.domain.model.User;
+import dev.folomkin.taskmanager.exceptions.ChangeTaskAccessDeniedException;
 import dev.folomkin.taskmanager.exceptions.InvalidTaskFieldException;
 import dev.folomkin.taskmanager.exceptions.NoSuchElementException;
 import dev.folomkin.taskmanager.repository.TaskRepository;
@@ -112,31 +113,34 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public Task updateStatusTask(Long taskId, TaskDto taskDto, User user) {
         Task changedTask = getById(taskId);
-        if (isAccessAllowed(changedTask, user)) {
+        if (isExecutor(changedTask, user) || user.getRole() == Role.ROLE_ADMIN) {
             changedTask.setStatus(taskDto.getStatus());
             taskRepository.save(changedTask);
             return changedTask;
         }
-        return null;
+        throw new ChangeTaskAccessDeniedException(messageSource.getMessage("errors.403.task.change.executor", new Object[0], null));
     }
 
 
     @Override
-    public Task updateCommentsTask(Long taskId, TaskDto taskDto) {
+    public Task updateCommentsTask(Long taskId, TaskDto taskDto, User user) {
         Task changedTask = getById(taskId);
-        changedTask.setComments(taskDto.getComments());
-        taskRepository.save(changedTask);
-        return changedTask;
+        if (isExecutor(changedTask, user) || user.getRole() == Role.ROLE_ADMIN) {
+            changedTask.setComments(taskDto.getComments());
+            taskRepository.save(changedTask);
+            return changedTask;
+        }
+        throw new ChangeTaskAccessDeniedException(messageSource.getMessage("errors.403.task.change.executor", new Object[0], null));
     }
 
-    public boolean isAccessAllowed(Task taskToChange, User user) {
-        boolean isExecutor = taskToChange.getExecutor().equalsIgnoreCase(user.getEmail());
-        if ((isExecutor && user.getRole() == Role.ROLE_USER) || user.getRole() == Role.ROLE_ADMIN) {
+
+    public boolean isExecutor(Task taskToChange, User user) {
+        boolean isExecutorUser = taskToChange.getExecutor().equalsIgnoreCase(user.getEmail());
+        if (isExecutorUser) {
             return true;
         }
         return false;
     }
-
     private Task getById(Long id) {
         return taskRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException(

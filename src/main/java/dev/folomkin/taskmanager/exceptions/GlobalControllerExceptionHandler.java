@@ -58,7 +58,17 @@ public class GlobalControllerExceptionHandler extends ResponseEntityExceptionHan
     }
 
 
-
+    @ExceptionHandler(value = ChangeTaskAccessDeniedException.class)
+    @ResponseStatus(value = HttpStatus.FORBIDDEN)
+    protected ProblemDetail changeTaskAccessDenied(ChangeTaskAccessDeniedException ex, WebRequest request) {
+        ProblemDetail problemDetail = ProblemDetail
+                .forStatusAndDetail(
+                        HttpStatus.FORBIDDEN,
+                        ex.getMessage());
+        problemDetail.setTitle(messageSource.getMessage("errors.403.problemDetailsTitle", new Object[0], null));
+        problemDetail.setDetail(ex.getMessage());
+        return problemDetail;
+    }
 //============//
 
     @ExceptionHandler(value = UserNotFoundException.class)
@@ -68,18 +78,6 @@ public class GlobalControllerExceptionHandler extends ResponseEntityExceptionHan
                 .status(HttpStatus.UNAUTHORIZED)
                 .body(new ErrorMessage(
                         HttpStatus.UNAUTHORIZED.value(),
-                        new Date(),
-                        ex.getMessage(),
-                        request.getDescription(false)));
-    }
-
-    @ExceptionHandler(value = ChangeTaskAccessDeniedException.class)
-    @ResponseStatus(value = HttpStatus.FORBIDDEN)
-    protected ResponseEntity<ErrorMessage> changeTaskAccessDenied(ChangeTaskAccessDeniedException ex, WebRequest request) {
-        return ResponseEntity
-                .status(HttpStatus.FORBIDDEN)
-                .body(new ErrorMessage(
-                        HttpStatus.FORBIDDEN.value(),
                         new Date(),
                         ex.getMessage(),
                         request.getDescription(false)));

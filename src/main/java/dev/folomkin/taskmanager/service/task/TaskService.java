@@ -19,7 +19,7 @@ public interface TaskService {
 
     Task updateStatusTask(Long id, TaskDto taskDto, User user);
     Task updateDescriptionTask(Long id, TaskDto taskDto);
-    Task updateCommentsTask(Long id, TaskDto taskDto);
+    Task updateCommentsTask(Long id, TaskDto taskDto, User user);
 
     Task updatePriorityTask(Long id, TaskDto taskDto);
 

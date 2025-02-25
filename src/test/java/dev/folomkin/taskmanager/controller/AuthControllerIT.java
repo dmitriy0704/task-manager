@@ -95,5 +95,4 @@ class AuthControllerIT {
                         .contentType(MediaType.APPLICATION_JSON));
     }
 
-
 }

@@ -114,7 +114,7 @@ public class TaskController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(value = "/create-task", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> create(@Valid @RequestBody TaskSaveDto taskSaveDto,
-                                       @AuthenticationPrincipal User user) {
+                                    @AuthenticationPrincipal User user) {
         Task task = taskService.create(taskSaveDto, user);
         return new ResponseEntity<>(task, HttpStatus.CREATED);
     }
@@ -124,8 +124,8 @@ public class TaskController {
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(value = "/user-task/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Task> getTaskByUserId(@PathVariable("userId")
-                                                      @Parameter(description = "Идентификатор пользователя",
-                                                              required = true) Long userId) {
+                                      @Parameter(description = "Идентификатор пользователя",
+                                              required = true) Long userId) {
         return taskService.getAllUserTasks(userId);
     }
 
@@ -169,14 +169,7 @@ public class TaskController {
                                                       required = true) Long taskId,
                                               @Valid @RequestBody TaskDto taskDto,
                                               @AuthenticationPrincipal User user) {
-        Task task = taskService.updateStatusTask(taskId, taskDto, user);
-        if (task == null) {
-            return new ResponseEntity<>(
-                    messageSource.getMessage("errors.403.task.change", new Object[0], null),
-                    HttpStatus.FORBIDDEN
-            );
-        }
-        return ResponseEntity.ok().body(task);
+        return ResponseEntity.ok().body(taskService.updateStatusTask(taskId, taskDto, user));
     }
 
     @Operation(summary = "Обновление комментария к задаче", description = "Необходимо указать id задачи")
@@ -184,8 +177,9 @@ public class TaskController {
     public ResponseEntity<Task> updateCommentsTask(@PathVariable("taskId")
                                                    @Parameter(description = "Идентификатор задачи",
                                                            required = true) Long taskId,
-                                                   @Valid @RequestBody TaskDto taskDto) {
-        return ResponseEntity.ok(taskService.updateCommentsTask(taskId, taskDto));
+                                                   @Valid @RequestBody TaskDto taskDto,
+                                                   @AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(taskService.updateCommentsTask(taskId, taskDto, user));
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
