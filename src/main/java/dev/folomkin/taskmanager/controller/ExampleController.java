@@ -15,19 +15,13 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Демонстрация", description = "Для текущего авторизованного пользователя")
 public class ExampleController {
     private final UserService service;
+//
+//    @GetMapping
+//    @Operation(summary = "Доступен только авторизованным пользователям")
+//    public String example() {
+//        return "Hello, world!";
+//    }
 
-    @GetMapping
-    @Operation(summary = "Доступен только авторизованным пользователям")
-    public String example() {
-        return "Hello, world!";
-    }
-
-    @GetMapping("/admin")
-    @Operation(summary = "Доступен только авторизованным пользователям с ролью ADMIN")
-    @PreAuthorize("hasRole('ADMIN')")
-    public String exampleAdmin() {
-        return "Hello, admin!";
-    }
 
     @GetMapping("/set-admin")
     @Operation(summary = "Стать Админом")
@@ -36,5 +30,10 @@ public class ExampleController {
     }
 
 
-
+    @GetMapping("/admin")
+    @Operation(summary = "Доступен только авторизованным пользователям с ролью ADMIN")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String exampleAdmin() {
+        return "Hello, admin!";
+    }
 }

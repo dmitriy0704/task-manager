@@ -152,7 +152,7 @@ public class TaskController {
 
 
     @Operation(summary = "Обновление описания задачи", description = "Необходимо указать id задачи")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize(value = "hasRole('ADMIN')")
     @PatchMapping(value = "/update-task/description/{taskId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Task> updateDescriptionTask(@PathVariable("taskId")
                                                       @Parameter(description = "Идентификатор задачи",
@@ -181,6 +181,11 @@ public class TaskController {
                                                    @AuthenticationPrincipal User user) {
         return ResponseEntity.ok(taskService.updateCommentsTask(taskId, taskDto, user));
     }
+
+
+
+
+
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)

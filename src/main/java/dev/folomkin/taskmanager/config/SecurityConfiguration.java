@@ -1,5 +1,6 @@
 package dev.folomkin.taskmanager.config;
 
+import dev.folomkin.taskmanager.exceptions.AccessDeniedHandlerImpl;
 import dev.folomkin.taskmanager.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -16,6 +17,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -31,11 +33,6 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 public class SecurityConfiguration {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final UserService userService;
-
-//    @Autowired()
-//    @Qualifier("CustomAccessDeniedHandler")
-//    AuthenticationEntryPoint authEntryPoint;
-
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -60,6 +57,10 @@ public class SecurityConfiguration {
                                         .authenticationEntryPoint(
                                                 new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)
                                         )
+                ).exceptionHandling(
+                        exceptionHandler -> exceptionHandler.accessDeniedHandler(
+                                accessDeniedHandler()
+                        )
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
@@ -82,6 +83,12 @@ public class SecurityConfiguration {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config)
             throws Exception {
         return config.getAuthenticationManager();
+    }
+
+
+    @Bean
+    public AccessDeniedHandler accessDeniedHandler() {
+        return new AccessDeniedHandlerImpl();
     }
 
 }
