@@ -39,7 +39,6 @@ class AuthControllerIT {
     }
 
 
-
     @Test
     public void whenPostRequestToUsersAndValidUser_thenCorrectResponseSignUp() throws Exception {
         MediaType applicationJson = new MediaType(MediaType.APPLICATION_JSON);
@@ -67,14 +66,12 @@ class AuthControllerIT {
     }
 
 
-
     @Test
     public void whenPostRequestToUsersAndValidUser_thenCorrectResponseSignIn() throws Exception {
         MediaType applicationJson = new MediaType(MediaType.APPLICATION_JSON);
         mockMvc.perform(post("/api/v1/auth/sign-in")
-                        .with(user("admin")
-                                .password("password1")
-                                .roles("USER"))
+                        .with(user("admdidnd")
+                                .password("password12"))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content()

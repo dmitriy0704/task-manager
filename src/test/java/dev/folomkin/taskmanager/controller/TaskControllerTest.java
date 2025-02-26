@@ -1,7 +1,7 @@
 package dev.folomkin.taskmanager.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dev.folomkin.taskmanager.config.SecurityConfiguration;
+import dev.folomkin.taskmanager.config.security.SecurityConfiguration;
 import dev.folomkin.taskmanager.domain.dto.task.TaskSaveDto;
 import dev.folomkin.taskmanager.domain.model.*;
 import dev.folomkin.taskmanager.repository.TaskRepository;

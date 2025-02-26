@@ -41,6 +41,12 @@ public class TaskServiceImpl implements TaskService {
         this.userRepository = userRepository;
     }
 
+
+    /**
+     * Получение всех задач без фильтрации
+     *
+     * @return список задач или исключение о том, что список пуст
+     */
     @Override
     public List<Task> getTasks() {
         if (taskRepository.findAll().isEmpty()) {
@@ -141,6 +147,7 @@ public class TaskServiceImpl implements TaskService {
         }
         return false;
     }
+
     private Task getById(Long id) {
         return taskRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException(

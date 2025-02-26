@@ -1,4 +1,4 @@
-package dev.folomkin.taskmanager.config;
+package dev.folomkin.taskmanager.config.security;
 
 import dev.folomkin.taskmanager.service.security.JwtService;
 import dev.folomkin.taskmanager.service.user.UserService;

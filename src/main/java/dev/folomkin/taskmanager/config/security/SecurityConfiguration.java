@@ -1,4 +1,4 @@
-package dev.folomkin.taskmanager.config;
+package dev.folomkin.taskmanager.config.security;
 
 import dev.folomkin.taskmanager.exceptions.AccessDeniedHandlerImpl;
 import dev.folomkin.taskmanager.exceptions.CustomAuthenticationEntryPoint;
