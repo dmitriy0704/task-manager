@@ -15,20 +15,13 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Демонстрация", description = "Для текущего авторизованного пользователя")
 public class DemoController {
     private final UserService service;
-//
-//    @GetMapping
-//    @Operation(summary = "Доступен только авторизованным пользователям")
-//    public String example() {
-//        return "Hello, world!";
-//    }
-
 
     @GetMapping("/set-admin")
     @Operation(summary = "Стать Админом")
-    public void getAdmin() {
+    public String getAdmin() {
         service.getAdmin();
+        return "Теперь вы можете отправлять запросы от имени администратора";
     }
-
 
     @GetMapping("/admin")
     @Operation(summary = "Демонстрация доступа только авторизованным пользователям с ролью ADMIN")

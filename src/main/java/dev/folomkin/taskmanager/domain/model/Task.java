@@ -52,7 +52,7 @@ public class Task {
     @Column(name = "comments")
     private String comments;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "author_id")
     private User author;
 

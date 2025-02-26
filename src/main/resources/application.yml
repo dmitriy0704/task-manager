@@ -21,7 +21,8 @@ spring:
     compose:
       enabled: true
       lifecycle-management: start_and_stop
-
+  api-docs:
+    enabled: true
 server:
   port: 8080
   error:

@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-@Schema(description = "Информация о пользователе")
+@Schema(description = "Информация о пользователях")
 @Entity
 @NoArgsConstructor
 @Table(name = "users")
@@ -58,7 +58,7 @@ public class User implements UserDetails {
     }
 
 
-@JsonIgnore
+    @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));

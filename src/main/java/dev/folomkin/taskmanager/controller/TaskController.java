@@ -1,7 +1,6 @@
 package dev.folomkin.taskmanager.controller;
 
-import dev.folomkin.taskmanager.domain.dto.task.TaskDto;
-import dev.folomkin.taskmanager.domain.dto.task.TaskSaveDto;
+import dev.folomkin.taskmanager.domain.dto.task.*;
 import dev.folomkin.taskmanager.domain.dto.user.UserResponseDto;
 import dev.folomkin.taskmanager.domain.model.Task;
 import dev.folomkin.taskmanager.domain.model.User;
@@ -96,7 +95,7 @@ public class TaskController {
             @Min(0) @Parameter(description = "Номер страницы с результатом") Integer offset,
             @RequestParam(value = "limit", defaultValue = "10") @Min(1) @Max(50)
             @Parameter(description = "Количество выводимых задач на странице. Минимум 1, максимум 50") Integer limit,
-            @RequestParam(value = "sort", required = false) @Parameter(description = "Поле сортировки") String sortField
+            @RequestParam(value = "sort") @Parameter(description = "Поле сортировки") String sortField
     ) {
         PageRequest pageRequest = PageRequest.of(offset, limit, Sort.by(Sort.Direction.ASC, sortField));
         return taskService.getAllTasksWithFilter(pageRequest);
@@ -140,45 +139,42 @@ public class TaskController {
     }
 
 
-    @Operation(summary = "Обновление приоритета задачи", description = "Необходимо указать id задачи")
+    @Operation(summary = "Обновление приоритета задачи", description = "Необходимо указать id задачи и одно из доступных значений статуса")
     @PreAuthorize("hasRole('ADMIN')")
-    @PatchMapping(value = "/update-task/priority/{taskId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Task> updatePriorityTask(@PathVariable("taskId")
-                                                   @Parameter(description = "Идентификатор задачи",
-                                                           required = true) Long taskId,
-                                                   @Valid @RequestBody TaskDto taskDto) {
+    @PutMapping(value = "/update-task/priority/{taskId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Task> updatePriorityTask(
+            @PathVariable("taskId") @Parameter(description = "Идентификатор задачи", required = true) Long taskId,
+            @Valid @RequestBody @Parameter(description = "Приоритет задачи", required = true) TaskPriorityDto taskDto) {
         return ResponseEntity.ok(taskService.updatePriorityTask(taskId, taskDto));
     }
 
 
     @Operation(summary = "Обновление описания задачи", description = "Необходимо указать id задачи")
     @PreAuthorize(value = "hasRole('ADMIN')")
-    @PatchMapping(value = "/update-task/description/{taskId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Task> updateDescriptionTask(@PathVariable("taskId")
-                                                      @Parameter(description = "Идентификатор задачи",
-                                                              required = true) Long taskId,
-                                                      @Valid @RequestBody TaskDto taskDto) {
+    @PutMapping(value = "/update-task/description/{taskId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Task> updateDescriptionTask(
+            @PathVariable("taskId") @Parameter(description = "Идентификатор задачи", required = true) Long taskId,
+            @Valid @RequestBody @Parameter(description = "Описание задачи", required = true) TaskDescriptionDto taskDto) {
         return ResponseEntity.ok(taskService.updateDescriptionTask(taskId, taskDto));
     }
 
 
-    @Operation(summary = "Обновление статуса задачи", description = "Необходимо указать id задачи")
-    @PatchMapping(value = "/update-task/status/{taskId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateStatusTask(@PathVariable("taskId")
-                                              @Parameter(description = "Идентификатор задачи",
-                                                      required = true) Long taskId,
-                                              @Valid @RequestBody TaskDto taskDto,
-                                              @AuthenticationPrincipal User user) {
-        return ResponseEntity.ok().body(taskService.updateStatusTask(taskId, taskDto, user));
+    @Operation(summary = "Обновление статуса задачи", description = "Необходимо указать id задачи и одно из доступных значений статуса")
+    @PutMapping(value = "/update-task/status/{taskId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> updateStatusTask(
+            @PathVariable("taskId")
+            @Parameter(description = "Идентификатор задачи", required = true) Long taskId,
+            @Valid @RequestBody @Parameter(description = "Статус задачи", required = true) TaskStatusDto newStatus,
+            @AuthenticationPrincipal User user) {
+        return ResponseEntity.ok().body(taskService.updateStatusTask(taskId, newStatus, user));
     }
 
     @Operation(summary = "Обновление комментария к задаче", description = "Необходимо указать id задачи")
-    @PatchMapping(value = "/update-task/comments/{taskId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Task> updateCommentsTask(@PathVariable("taskId")
-                                                   @Parameter(description = "Идентификатор задачи",
-                                                           required = true) Long taskId,
-                                                   @Valid @RequestBody TaskDto taskDto,
-                                                   @AuthenticationPrincipal User user) {
+    @PutMapping(value = "/update-task/comments/{taskId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Task> updateCommentsTask(
+            @PathVariable("taskId") @Parameter(description = "Идентификатор задачи", required = true) Long taskId,
+            @Valid @RequestBody @Parameter(description = "Комментарии к задаче", required = true) TaskCommentsDto taskDto,
+            @AuthenticationPrincipal User user) {
         return ResponseEntity.ok(taskService.updateCommentsTask(taskId, taskDto, user));
     }
 

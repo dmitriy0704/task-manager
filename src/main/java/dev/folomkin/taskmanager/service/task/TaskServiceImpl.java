@@ -1,7 +1,6 @@
 package dev.folomkin.taskmanager.service.task;
 
-import dev.folomkin.taskmanager.domain.dto.task.TaskDto;
-import dev.folomkin.taskmanager.domain.dto.task.TaskSaveDto;
+import dev.folomkin.taskmanager.domain.dto.task.*;
 import dev.folomkin.taskmanager.domain.mapper.TaskMapper;
 import dev.folomkin.taskmanager.domain.model.Role;
 import dev.folomkin.taskmanager.domain.model.Task;
@@ -100,7 +99,7 @@ public class TaskServiceImpl implements TaskService {
 
 
     @Override
-    public Task updatePriorityTask(Long taskId, TaskDto taskDto) {
+    public Task updatePriorityTask(Long taskId, TaskPriorityDto taskDto) {
         Task changedTask = getById(taskId);
         changedTask.setPriority(taskDto.getPriority());
         taskRepository.save(changedTask);
@@ -108,7 +107,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public Task updateDescriptionTask(Long taskId, TaskDto taskDto) {
+    public Task updateDescriptionTask(Long taskId, TaskDescriptionDto taskDto) {
         Task changedTask = getById(taskId);
         changedTask.setDescription(taskDto.getDescription());
         taskRepository.save(changedTask);
@@ -117,7 +116,7 @@ public class TaskServiceImpl implements TaskService {
 
 
     @Override
-    public Task updateStatusTask(Long taskId, TaskDto taskDto, User user) {
+    public Task updateStatusTask(Long taskId, TaskStatusDto taskDto, User user) {
         Task changedTask = getById(taskId);
         if (isExecutor(changedTask, user) || user.getRole() == Role.ROLE_ADMIN) {
             changedTask.setStatus(taskDto.getStatus());
@@ -129,7 +128,7 @@ public class TaskServiceImpl implements TaskService {
 
 
     @Override
-    public Task updateCommentsTask(Long taskId, TaskDto taskDto, User user) {
+    public Task updateCommentsTask(Long taskId, TaskCommentsDto taskDto, User user) {
         Task changedTask = getById(taskId);
         if (isExecutor(changedTask, user) || user.getRole() == Role.ROLE_ADMIN) {
             changedTask.setComments(taskDto.getComments());

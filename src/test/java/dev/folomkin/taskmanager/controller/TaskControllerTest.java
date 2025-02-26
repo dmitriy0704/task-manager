@@ -197,10 +197,10 @@ class TaskControllerTest {
         taskSaveDto.setExecutor("executor");
         when(this.taskService.create(taskSaveDto, null)).thenReturn(tsd1);
         mockMvc.perform(post("/api/v1/create-task")
-                        .with(csrf())
-                        .with(user("admin").roles("ADMIN"))
-                        .contentType("application/json")
-                        .content(mapper.writeValueAsString(taskSaveDto)));
+                .with(csrf())
+                .with(user("admin").roles("ADMIN"))
+                .contentType("application/json")
+                .content(mapper.writeValueAsString(taskSaveDto)));
     }
 
     @DisplayName("Создание задачи неавторизованным пользователем")
