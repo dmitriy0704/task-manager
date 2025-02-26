@@ -73,7 +73,7 @@ class AuthControllerIT {
         MediaType applicationJson = new MediaType(MediaType.APPLICATION_JSON);
         mockMvc.perform(post("/api/v1/auth/sign-in")
                         .with(user("admin")
-                                .password("password")
+                                .password("password1")
                                 .roles("USER"))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())

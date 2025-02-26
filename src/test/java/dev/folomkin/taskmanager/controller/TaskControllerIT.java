@@ -62,7 +62,7 @@ public class TaskControllerIT {
     }
 
 
-    @DisplayName("Получение списка всех задач")
+    @DisplayName("Получение списка всех задач с правами администратора")
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
     void shouldReturnAllTasks() throws Exception {
@@ -72,7 +72,7 @@ public class TaskControllerIT {
     }
 
 
-    @DisplayName("Получение задачи по id")
+    @DisplayName("Получение задачи по id с правами администратора")
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
     void shouldReturnOneTasks() throws Exception {
