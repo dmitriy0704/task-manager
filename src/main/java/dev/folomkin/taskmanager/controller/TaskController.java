@@ -139,7 +139,7 @@ public class TaskController {
     }
 
 
-    @Operation(summary = "Обновление приоритета задачи", description = "Необходимо указать id задачи и одно из доступных значений статуса")
+    @Operation(summary = "Обновление приоритета задачи", description = "Необходимо указать id задачи и одно из доступных значений приоритета")
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping(value = "/update-task/priority/{taskId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Task> updatePriorityTask(
