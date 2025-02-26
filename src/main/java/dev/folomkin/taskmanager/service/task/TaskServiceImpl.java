@@ -40,7 +40,6 @@ public class TaskServiceImpl implements TaskService {
         this.userRepository = userRepository;
     }
 
-
     /**
      * Получение всех задач без фильтрации
      *
@@ -54,6 +53,14 @@ public class TaskServiceImpl implements TaskService {
         return taskRepository.findAll();
     }
 
+    /**
+     * Получение всех задач с возможностью фильтрации и пагинации
+     *
+     * @param request параметры сортировки и пагинации:
+     *                offset - номер страницы
+     *                limit - количество выводимых записей на странице
+     *                sortField - поле сортировки задач(обязательное)
+     */
     @Override
     public Page<Task> getAllTasksWithFilter(PageRequest request) {
         if (taskRepository.findAll(request).isEmpty()) {
@@ -62,11 +69,23 @@ public class TaskServiceImpl implements TaskService {
         return taskRepository.findAll(request);
     }
 
+    /**
+     * Получение задачи по id
+     *
+     * @param taskId id задачи
+     */
     @Override
     public Task getTask(Long taskId) {
         return getById(taskId);
     }
 
+    /**
+     * Создание новой задачи
+     *
+     * @param taskSaveDto тело запроса
+     * @param user        объект текущего пользователя
+     *                    для проверки прав на создание задачи
+     */
     @Override
     @Transactional
     public Task create(TaskSaveDto taskSaveDto, User user) {
@@ -77,27 +96,44 @@ public class TaskServiceImpl implements TaskService {
         throw new InvalidTaskFieldException(messageSource.getMessage("errors.400.dublicateTask", new Object[0], null));
     }
 
-
+    /**
+     * Получение задач пользователя
+     *
+     * @param userId id пользователя
+     */
     @Override
     public List<Task> getAllUserTasks(Long userId) {
         Optional<User> user = Optional.ofNullable(userService.getUserById(userId).orElseThrow(
+                // Пользователь не найден
                 () -> new NoSuchElementException(messageSource.getMessage("errors.404.user", new Object[0], null))
         ));
 
         List<Task> userTasks = taskRepository.findTaskByAuthorId(user.get().getId());
         if (userTasks.isEmpty()) {
+            // У пользователя нет задач
             throw new NoSuchElementException(messageSource.getMessage("errors.404.user.tasks", new Object[0], null));
         }
         return taskRepository.findTaskByAuthorId(userId);
     }
 
+    /**
+     * Удаление задачи по id
+     *
+     * @param taskId id задачи
+     */
     @Override
     @Transactional
     public void deleteTask(Long taskId) {
         taskRepository.delete(getById(taskId));
     }
 
-
+    /**
+     * Обновление приоритета задачи по id
+     *
+     * @param taskId  id задачи
+     * @param taskDto тело запроса с новым приоритетом
+     * @return changedTask - обновленная задача
+     */
     @Override
     public Task updatePriorityTask(Long taskId, TaskPriorityDto taskDto) {
         Task changedTask = getById(taskId);
@@ -106,6 +142,13 @@ public class TaskServiceImpl implements TaskService {
         return changedTask;
     }
 
+    /**
+     * Обновление описания задачи по id
+     *
+     * @param taskId  id задачи
+     * @param taskDto тело запроса с новым описанием
+     * @return changedTask - обновленная задача
+     */
     @Override
     public Task updateDescriptionTask(Long taskId, TaskDescriptionDto taskDto) {
         Task changedTask = getById(taskId);
@@ -114,7 +157,14 @@ public class TaskServiceImpl implements TaskService {
         return changedTask;
     }
 
-
+    /**
+     * Обновление статуса задачи по id
+     *
+     * @param taskId  id задачи
+     * @param taskDto тело запроса с новым статусом
+     * @return changedTask - обновленная задача
+     * @throws ChangeTaskIsExecutorException пользователь не назначен исполнителем задачи
+     */
     @Override
     public Task updateStatusTask(Long taskId, TaskStatusDto taskDto, User user) {
         Task changedTask = getById(taskId);
@@ -126,7 +176,14 @@ public class TaskServiceImpl implements TaskService {
         throw new ChangeTaskIsExecutorException(messageSource.getMessage("errors.403.task.change.executor", new Object[0], null));
     }
 
-
+    /**
+     * Обновление комментария к задаче по id
+     *
+     * @param taskId  id задачи
+     * @param taskDto тело запроса с новым комментарием
+     * @return changedTask - обновленная задача
+     * @throws ChangeTaskIsExecutorException пользователь не назначен исполнителем задачи
+     */
     @Override
     public Task updateCommentsTask(Long taskId, TaskCommentsDto taskDto, User user) {
         Task changedTask = getById(taskId);
@@ -138,7 +195,12 @@ public class TaskServiceImpl implements TaskService {
         throw new ChangeTaskIsExecutorException(messageSource.getMessage("errors.403.task.change.executor", new Object[0], null));
     }
 
-
+    /**
+     * Проверка - является ли текущий пользователь исполнителем задачи
+     *
+     * @param taskToChange задача
+     * @param user         текущий пользователь
+     */
     public boolean isExecutor(Task taskToChange, User user) {
         boolean isExecutorUser = taskToChange.getExecutor().equalsIgnoreCase(user.getEmail());
         if (isExecutorUser) {
@@ -147,11 +209,15 @@ public class TaskServiceImpl implements TaskService {
         return false;
     }
 
+    /**
+     * Поиск задачи по id для использования внутри класса
+     *
+     * @param id задачи
+     * @throws NoSuchElementException задача не найдена
+     */
     private Task getById(Long id) {
         return taskRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException(
                         messageSource.getMessage("errors.404.task", new Object[0], null)));
     }
-
-
 }

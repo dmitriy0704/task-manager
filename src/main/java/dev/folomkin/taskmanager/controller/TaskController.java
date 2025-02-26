@@ -118,13 +118,11 @@ public class TaskController {
         return new ResponseEntity<>(task, HttpStatus.CREATED);
     }
 
-    @Operation(summary = "Получение списка задач пользователя",
-            description = "Поиск по id")
+    @Operation(summary = "Получение списка задач пользователя", description = "Поиск по id")
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(value = "/user-task/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Task> getTaskByUserId(@PathVariable("userId")
-                                      @Parameter(description = "Идентификатор пользователя",
-                                              required = true) Long userId) {
+                                      @Parameter(description = "Идентификатор пользователя", required = true) Long userId) {
         return taskService.getAllUserTasks(userId);
     }
 
@@ -132,14 +130,14 @@ public class TaskController {
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping(value = "/delete-task/{taskId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> deleteTask(@PathVariable("taskId")
-                                             @Parameter(description = "Идентификатор задачи",
-                                                     required = true) Long taskId) {
+                                             @Parameter(description = "Идентификатор задачи", required = true) Long taskId) {
         taskService.deleteTask(taskId);
         return new ResponseEntity<>("Задача успешно удалена", HttpStatus.NO_CONTENT);
     }
 
 
-    @Operation(summary = "Обновление приоритета задачи", description = "Необходимо указать id задачи и одно из доступных значений приоритета")
+    @Operation(summary = "Обновление приоритета задачи",
+            description = "Необходимо указать id задачи и одно из доступных значений приоритета")
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping(value = "/update-task/priority/{taskId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Task> updatePriorityTask(
@@ -159,7 +157,8 @@ public class TaskController {
     }
 
 
-    @Operation(summary = "Обновление статуса задачи", description = "Необходимо указать id задачи и одно из доступных значений статуса")
+    @Operation(summary = "Обновление статуса задачи",
+            description = "Необходимо указать id задачи и одно из доступных значений статуса")
     @PutMapping(value = "/update-task/status/{taskId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateStatusTask(
             @PathVariable("taskId")

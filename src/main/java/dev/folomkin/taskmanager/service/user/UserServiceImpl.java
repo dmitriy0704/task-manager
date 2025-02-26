@@ -32,6 +32,11 @@ public class UserServiceImpl implements UserService {
     }
 
 
+    /**
+     * Получение всех пользователей
+     *
+     * @return список пользователей
+     */
     @Override
     public List<User> findAll() {
         if (userRepository.findAll().isEmpty()) {
@@ -53,6 +58,12 @@ public class UserServiceImpl implements UserService {
     }
 
 
+    /**
+     * Получение пользователя по id
+     *
+     * @param userId id пользователя
+     * @return пользователь
+     */
     @Override
     public Optional<User> getUserById(Long userId) {
         return Optional.ofNullable(userRepository.findById(userId).orElseThrow(
@@ -94,8 +105,8 @@ public class UserServiceImpl implements UserService {
      * @return пользователь
      */
     public User getByUsername(String username) {
-            return userRepository.findByUsername(username)
-                    .orElseThrow(() -> new CustomAuthenticationException("Пользователь не найден"));
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomAuthenticationException("Пользователь не найден"));
     }
 
     /**

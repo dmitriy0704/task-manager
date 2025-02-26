@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-@Schema(description = "Информация о пользователях")
+@Schema(description = "Информация о пользователе")
 @Entity
 @NoArgsConstructor
 @Table(name = "users")
