@@ -6,7 +6,7 @@ import dev.folomkin.taskmanager.domain.mapper.TaskMapper;
 import dev.folomkin.taskmanager.domain.model.Role;
 import dev.folomkin.taskmanager.domain.model.Task;
 import dev.folomkin.taskmanager.domain.model.User;
-import dev.folomkin.taskmanager.exceptions.ChangeTaskAccessDeniedException;
+import dev.folomkin.taskmanager.exceptions.ChangeTaskIsExecutorException;
 import dev.folomkin.taskmanager.exceptions.InvalidTaskFieldException;
 import dev.folomkin.taskmanager.exceptions.NoSuchElementException;
 import dev.folomkin.taskmanager.repository.TaskRepository;
@@ -118,7 +118,7 @@ public class TaskServiceImpl implements TaskService {
             taskRepository.save(changedTask);
             return changedTask;
         }
-        throw new ChangeTaskAccessDeniedException(messageSource.getMessage("errors.403.task.change.executor", new Object[0], null));
+        throw new ChangeTaskIsExecutorException(messageSource.getMessage("errors.403.task.change.executor", new Object[0], null));
     }
 
 
@@ -130,7 +130,7 @@ public class TaskServiceImpl implements TaskService {
             taskRepository.save(changedTask);
             return changedTask;
         }
-        throw new ChangeTaskAccessDeniedException(messageSource.getMessage("errors.403.task.change.executor", new Object[0], null));
+        throw new ChangeTaskIsExecutorException(messageSource.getMessage("errors.403.task.change.executor", new Object[0], null));
     }
 
 

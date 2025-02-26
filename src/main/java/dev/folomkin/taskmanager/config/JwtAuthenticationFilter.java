@@ -1,6 +1,5 @@
 package dev.folomkin.taskmanager.config;
 
-import dev.folomkin.taskmanager.exceptions.UserNotFoundException;
 import dev.folomkin.taskmanager.service.security.JwtService;
 import dev.folomkin.taskmanager.service.user.UserService;
 import jakarta.servlet.FilterChain;
@@ -9,8 +8,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;

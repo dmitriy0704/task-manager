@@ -1,11 +1,11 @@
 package dev.folomkin.taskmanager.config;
 
 import dev.folomkin.taskmanager.exceptions.AccessDeniedHandlerImpl;
+import dev.folomkin.taskmanager.exceptions.CustomAuthenticationEntryPoint;
 import dev.folomkin.taskmanager.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -16,9 +16,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
-import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 
@@ -55,9 +55,10 @@ public class SecurityConfiguration {
                         exceptionHandler ->
                                 exceptionHandler
                                         .authenticationEntryPoint(
-                                                new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)
+                                                authenticationEntryPoint()
                                         )
-                ).exceptionHandling(
+                )
+                .exceptionHandling(
                         exceptionHandler -> exceptionHandler.accessDeniedHandler(
                                 accessDeniedHandler()
                         )
@@ -83,6 +84,12 @@ public class SecurityConfiguration {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config)
             throws Exception {
         return config.getAuthenticationManager();
+    }
+
+
+    @Bean
+    public AuthenticationEntryPoint authenticationEntryPoint() {
+        return new CustomAuthenticationEntryPoint();
     }
 
 

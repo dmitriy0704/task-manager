@@ -4,9 +4,9 @@ import dev.folomkin.taskmanager.domain.dto.user.UserResponseDto;
 import dev.folomkin.taskmanager.domain.mapper.UserMapper;
 import dev.folomkin.taskmanager.domain.model.Role;
 import dev.folomkin.taskmanager.domain.model.User;
-import dev.folomkin.taskmanager.exceptions.AuthorizeDublicateUserException;
+import dev.folomkin.taskmanager.exceptions.AuthExistUserException;
 import dev.folomkin.taskmanager.exceptions.NoSuchElementException;
-import dev.folomkin.taskmanager.exceptions.UserNotFoundException;
+import dev.folomkin.taskmanager.exceptions.CustomAuthenticationException;
 import dev.folomkin.taskmanager.repository.UserRepository;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
@@ -80,10 +80,10 @@ public class UserServiceImpl implements UserService {
      */
     public User create(User user) {
         if (userRepository.existsByUsername(user.getUsername())) {
-            throw new AuthorizeDublicateUserException("Пользователь с таким именем уже существует");
+            throw new AuthExistUserException("Пользователь с таким именем уже существует");
         }
         if (userRepository.existsByEmail(user.getEmail())) {
-            throw new AuthorizeDublicateUserException("Пользователь с таким email уже существует");
+            throw new AuthExistUserException("Пользователь с таким email уже существует");
         }
         return save(user);
     }
@@ -94,9 +94,8 @@ public class UserServiceImpl implements UserService {
      * @return пользователь
      */
     public User getByUsername(String username) {
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException("Пользователь не найден"));
-
+            return userRepository.findByUsername(username)
+                    .orElseThrow(() -> new CustomAuthenticationException("Пользователь не найден"));
     }
 
     /**

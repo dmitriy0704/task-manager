@@ -44,9 +44,9 @@ public class GlobalControllerExceptionHandler extends ResponseEntityExceptionHan
         return problemDetail;
     }
 
-    @ExceptionHandler(value = AuthorizeDublicateUserException.class)
+    @ExceptionHandler(value = AuthExistUserException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    protected ProblemDetail taskNotFound(AuthorizeDublicateUserException ex, WebRequest request) {
+    protected ProblemDetail taskNotFound(AuthExistUserException ex, WebRequest request) {
         ProblemDetail problemDetail = ProblemDetail
                 .forStatusAndDetail(
                         HttpStatus.BAD_REQUEST,
@@ -57,9 +57,9 @@ public class GlobalControllerExceptionHandler extends ResponseEntityExceptionHan
     }
 
 
-    @ExceptionHandler(value = ChangeTaskAccessDeniedException.class)
+    @ExceptionHandler(value = ChangeTaskIsExecutorException.class)
     @ResponseStatus(value = HttpStatus.FORBIDDEN)
-    protected ProblemDetail changeTaskAccessDenied(ChangeTaskAccessDeniedException ex, WebRequest request) {
+    protected ProblemDetail changeTaskAccessDenied(ChangeTaskIsExecutorException ex, WebRequest request) {
         ProblemDetail problemDetail = ProblemDetail
                 .forStatusAndDetail(
                         HttpStatus.FORBIDDEN,
@@ -69,9 +69,9 @@ public class GlobalControllerExceptionHandler extends ResponseEntityExceptionHan
         return problemDetail;
     }
 
-    @ExceptionHandler(value = UserNotFoundException.class)
+    @ExceptionHandler(value = CustomAuthenticationException.class)
     @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
-    protected ProblemDetail usernameNotFound(UserNotFoundException ex, WebRequest request) {
+    protected ProblemDetail usernameNotFound(CustomAuthenticationException ex, WebRequest request) {
         ProblemDetail problemDetail = ProblemDetail
                 .forStatusAndDetail(
                         HttpStatus.UNAUTHORIZED,
