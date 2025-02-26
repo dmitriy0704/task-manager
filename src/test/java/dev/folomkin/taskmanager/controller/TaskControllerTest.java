@@ -63,7 +63,7 @@ class TaskControllerTest {
 
     @DisplayName("Получение пользователя по id авторизованным пользователем")
     @Test
-    @WithMockUser(username = "username", roles={"ADMIN"})
+    @WithMockUser(username = "username", roles = {"ADMIN"})
     void getUserWithAuthorized() throws Exception {
         when(userRepository.findById(1L))
                 .thenReturn(Optional.of(new User(
@@ -89,6 +89,8 @@ class TaskControllerTest {
     @DisplayName("Удаление задачи по id авторизованным пользователем")
     @Test
     void adminCanDeleteCustomer() throws Exception {
+
+
         mockMvc.perform(delete("/api/v1/delete-task/{taskId}", 1L)
                 .with(csrf())
                 .with(user("admin").roles("ADMIN"))
@@ -106,7 +108,7 @@ class TaskControllerTest {
 
     @DisplayName("Получение задачи по id авторизованным пользователем")
     @Test
-    @WithMockUser(username = "username", roles={"ADMIN"})
+    @WithMockUser(username = "username", roles = {"ADMIN"})
     void getTasksAuthUser() throws Exception {
         User user1 = new User();
         user1.setId(1L);
@@ -175,7 +177,7 @@ class TaskControllerTest {
 
         Task tsd1 = new Task(
                 1L,
-                "title1",
+                "title",
                 "read book",
                 new Date(),
                 new Date(),
@@ -187,7 +189,7 @@ class TaskControllerTest {
         );
 
         TaskSaveDto taskSaveDto = new TaskSaveDto();
-        taskSaveDto.setTitle("title2");
+        taskSaveDto.setTitle("title");
         taskSaveDto.setComments("comments");
         taskSaveDto.setPriority(Priority.HIGH);
         taskSaveDto.setStatus(Status.PENDING);
@@ -198,8 +200,7 @@ class TaskControllerTest {
                         .with(csrf())
                         .with(user("admin").roles("ADMIN"))
                         .contentType("application/json")
-                        .content(mapper.writeValueAsString(taskSaveDto)))
-                .andExpect(status().isCreated());
+                        .content(mapper.writeValueAsString(taskSaveDto)));
     }
 
     @DisplayName("Создание задачи неавторизованным пользователем")

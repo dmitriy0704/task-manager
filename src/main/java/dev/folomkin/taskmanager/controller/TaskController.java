@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-@Tag(name = "Управление задачами", description = "Для авторизованных пользователей")
+@Tag(name = "Управление задачами", description = "Только для авторизованных пользователей")
 @RestController
 @RequestMapping("/api/v1")
 @Validated

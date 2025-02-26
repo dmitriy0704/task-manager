@@ -1,6 +1,7 @@
 package dev.folomkin.taskmanager.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
@@ -13,6 +14,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+@Schema(description = "Информация о пользователе")
 @Entity
 @NoArgsConstructor
 @Table(name = "users")

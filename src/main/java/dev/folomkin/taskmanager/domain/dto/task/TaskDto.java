@@ -3,10 +3,12 @@ package dev.folomkin.taskmanager.domain.dto.task;
 import dev.folomkin.taskmanager.domain.model.Priority;
 import dev.folomkin.taskmanager.domain.model.Status;
 import dev.folomkin.taskmanager.domain.model.Task;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@Hidden
 @NoArgsConstructor
 @Getter
 @Setter

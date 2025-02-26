@@ -2,13 +2,13 @@ package dev.folomkin.taskmanager.domain.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.util.Date;
 
+@Schema(description = "Задачи пользователей")
 @Entity
 @NoArgsConstructor
 @Table(name = "tasks")
@@ -52,11 +52,7 @@ public class Task {
     @Column(name = "comments")
     private String comments;
 
-//    @Column(name = "author")
-//    private String author;
-
-
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "author_id")
     private User author;
 
