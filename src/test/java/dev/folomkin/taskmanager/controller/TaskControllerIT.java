@@ -23,6 +23,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
@@ -79,8 +80,8 @@ public class TaskControllerIT {
                 null,
                 "title1",
                 "read book",
-                new Date(),
-                new Date(),
+                null,
+                null,
                 Status.PENDING,
                 Priority.HIGH,
                 "new comments",
