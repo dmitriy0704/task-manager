@@ -90,7 +90,7 @@ public class TaskControllerIT {
         taskRepository.save(task);
 
         // When
-        ResultActions resultActions = mockMvc.perform(get("/api/v1/get-task/{taskId}", task.getId())
+        ResultActions resultActions = mockMvc.perform(get("/api/v1/get-task-id/{taskId}", task.getId())
                 .contentType(MediaType.APPLICATION_JSON)).andDo(print());
 
         // Then

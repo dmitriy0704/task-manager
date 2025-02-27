@@ -131,7 +131,7 @@ class TaskControllerTest {
                         "user@mail.ru"
 
                 )));
-        mockMvc.perform(get("/api/v1/get-task/{taskId}", 1L))
+        mockMvc.perform(get("/api/v1/get-task-id/{taskId}", 1L))
                 .andExpect(status().isOk());
     }
 
@@ -159,7 +159,7 @@ class TaskControllerTest {
                         user1,
                         "user@mail.ru"
                 )));
-        mockMvc.perform(get("/api/v1/get-task/{taskId}", 1L)
+        mockMvc.perform(get("/api/v1/get-task-id/{taskId}", 1L)
                         .with(anonymous()))
                 .andExpect(status().isUnauthorized());
     }
