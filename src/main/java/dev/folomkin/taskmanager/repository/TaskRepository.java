@@ -10,5 +10,5 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
 
     Task findByTitle(String title);
 
-
+    List<Task> findAllByExecutor(String executor);
 }

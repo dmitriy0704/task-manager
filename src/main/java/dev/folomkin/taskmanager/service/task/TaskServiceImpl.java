@@ -76,9 +76,21 @@ public class TaskServiceImpl implements TaskService {
      * @param taskId id задачи
      */
     @Override
-    public Task getTask(Long taskId) {
+    public Task getTaskById(Long taskId) {
         return getById(taskId);
     }
+
+
+    /**
+     * Получение задачи исполнителя
+     *
+     * @param executor email исполнителя
+     */
+    @Override
+    public List<Task> getTaskByExecutor(String executor) {
+        return taskRepository.findAllByExecutor(executor);
+    }
+
 
     /**
      * Создание новой задачи
@@ -98,12 +110,12 @@ public class TaskServiceImpl implements TaskService {
     }
 
     /**
-     * Получение задач пользователя
+     * Получение задач автора по id
      *
      * @param userId id пользователя
      */
     @Override
-    public List<Task> getAllUserTasks(Long userId) {
+    public List<Task> getAllTasksByAuthorId(Long userId) {
         Optional<User> user = Optional.ofNullable(userService.getUserById(userId).orElseThrow(
                 // Пользователь не найден
                 () -> new NoSuchElementException(messageSource.getMessage("errors.404.user", new Object[0], null))

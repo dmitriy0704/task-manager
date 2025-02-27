@@ -15,7 +15,9 @@ public interface TaskService {
 
     Page<Task> getAllTasksWithFilter(PageRequest request);
 
-    Task getTask(Long id);
+    Task getTaskById(Long id);
+
+    List<Task> getTaskByExecutor(String executor);
 
     Task updateStatusTask(Long id, TaskStatusDto taskDto, User user);
 
@@ -27,7 +29,6 @@ public interface TaskService {
 
     void deleteTask(Long id);
 
-    List<Task> getAllUserTasks(Long userId);
-
+    List<Task> getAllTasksByAuthorId(Long userId);
 
 }

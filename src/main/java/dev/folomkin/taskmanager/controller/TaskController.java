@@ -103,10 +103,27 @@ public class TaskController {
 
     @Operation(summary = "Получение задачи по id", description = "Необходимо указать id задачи")
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping(value = "/get-task/{taskId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Task getTask(@PathVariable("taskId")
-                        @Parameter(description = "Идентификатор задачи", required = true) Long taskId) {
-        return taskService.getTask(taskId);
+    @GetMapping(value = "/get-task-id/{taskId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Task getTaskById(@PathVariable("taskId")
+                            @Parameter(description = "Идентификатор задачи", required = true) Long taskId) {
+        return taskService.getTaskById(taskId);
+    }
+
+    @Operation(summary = "Получение задач исполнителя", description = "Необходимо указать email исполнителя")
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping(value = "/get-task-executor/{executor}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<Task> getTaskByExecutor(@PathVariable("executor")
+                                        @Parameter(description = "Email исполнителя", required = true) String executor) {
+        return taskService.getTaskByExecutor(executor);
+    }
+
+
+    @Operation(summary = "Получение списка задач по id автора", description = "Поиск по id")
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping(value = "/user-task/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<Task> getTaskByUserId(@PathVariable("userId")
+                                      @Parameter(description = "Идентификатор пользователя", required = true) Long userId) {
+        return taskService.getAllTasksByAuthorId(userId);
     }
 
     @Operation(summary = "Создание задачи", description = "Исполнитель назначается по email")
@@ -116,14 +133,6 @@ public class TaskController {
                                     @AuthenticationPrincipal User user) {
         Task task = taskService.create(taskSaveDto, user);
         return new ResponseEntity<>(task, HttpStatus.CREATED);
-    }
-
-    @Operation(summary = "Получение списка задач пользователя", description = "Поиск по id")
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping(value = "/user-task/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Task> getTaskByUserId(@PathVariable("userId")
-                                      @Parameter(description = "Идентификатор пользователя", required = true) Long userId) {
-        return taskService.getAllUserTasks(userId);
     }
 
     @Operation(summary = "Удаление задачи", description = "Необходимо указать id задачи")
