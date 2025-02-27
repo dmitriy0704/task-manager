@@ -91,19 +91,28 @@ public class TaskServiceImpl implements TaskService {
      *                sortField - поле сортировки задач(обязательное)
      */
     @Override
-    public Page<Task> getAllTasksWithFilter(PageRequest request, String executor) {
+    public Page<Task> getAllTasksWithFilter(PageRequest request, String executor, String author) {
         if (taskRepository.findAll(request).isEmpty()) {
             throw new NoSuchElementException(messageSource.getMessage("errors.404.taskList", new Object[0], null));
         }
-        if (executor == null || executor.isEmpty()) {
-            return taskRepository.findAll(request);
 
+        if (executor != null) {
+            return new PageImpl<>(taskRepository.findAll(request)
+                    .stream().filter(
+                            t ->
+                                    t.getExecutor().equalsIgnoreCase(executor)
+                    ).collect(Collectors.toList())
+            );
         }
-        return new PageImpl<>(taskRepository.findAll(request)
-                .stream().filter(
-                        t -> t.getExecutor().equalsIgnoreCase(executor)
-                ).collect(Collectors.toList())
-        );
+
+        if (author != null) {
+            return new PageImpl<>(taskRepository.findAll(request)
+                    .stream().filter(
+                            t -> t.getAuthor().getEmail().equalsIgnoreCase(author)
+                    ).collect(Collectors.toList())
+            );
+        }
+        return taskRepository.findAll(request);
     }
 
     /**

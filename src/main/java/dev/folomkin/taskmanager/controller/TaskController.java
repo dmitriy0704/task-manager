@@ -96,10 +96,11 @@ public class TaskController {
             @RequestParam(value = "limit", defaultValue = "10") @Min(1) @Max(50)
             @Parameter(description = "Количество выводимых задач на странице. Минимум 1, максимум 50") Integer limit,
             @RequestParam(value = "sort") @Parameter(description = "Поле сортировки") String sortField,
-            @RequestParam(value = "executor", required = false) @Parameter(description = "Исполнитель") String executor
+            @RequestParam(value = "executor", required = false) @Parameter(description = "Исполнитель указанный в задаче") String executor,
+            @RequestParam(value = "author", required = false) @Parameter(description = "Email автора") String author
     ) {
         PageRequest pageRequest = PageRequest.of(offset, limit, Sort.by(Sort.Direction.ASC, sortField));
-        return taskService.getAllTasksWithFilter(pageRequest, executor);
+        return taskService.getAllTasksWithFilter(pageRequest, executor, author);
     }
 
     @Operation(summary = "Получение задачи по id", description = "Необходимо указать id задачи")
