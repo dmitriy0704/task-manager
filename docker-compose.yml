@@ -5,7 +5,7 @@ volumes:
 
 services:
   app:
-    image: back:0.0.1
+    image: task-manager-back:0.0.1
     build:
       context: .
       dockerfile: Dockerfile
