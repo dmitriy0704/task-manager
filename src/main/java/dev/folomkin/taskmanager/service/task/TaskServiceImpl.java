@@ -13,12 +13,14 @@ import dev.folomkin.taskmanager.repository.UserRepository;
 import dev.folomkin.taskmanager.service.user.UserService;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class TaskServiceImpl implements TaskService {
@@ -45,9 +47,9 @@ public class TaskServiceImpl implements TaskService {
     // ===== USERS ===== //
 
     /**
-     * Получение задач автора по id
+     * Получение задач по id автора
      *
-     * @param userId id пользователя
+     * @param userId id автора
      */
     @Override
     public List<Task> getAllTasksByAuthorId(Long userId) {
@@ -68,7 +70,7 @@ public class TaskServiceImpl implements TaskService {
     // ===== TASKS ==== //
 
     /**
-     * Получение всех задач без фильтрации
+     * Получение всех задач без сортировки
      *
      * @return список задач или исключение о том, что список пуст
      */
@@ -81,7 +83,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     /**
-     * Получение всех задач с возможностью фильтрации и пагинации
+     * Получение всех задач с возможностью сортировки и пагинации
      *
      * @param request параметры сортировки и пагинации:
      *                offset - номер страницы
@@ -89,11 +91,19 @@ public class TaskServiceImpl implements TaskService {
      *                sortField - поле сортировки задач(обязательное)
      */
     @Override
-    public Page<Task> getAllTasksWithFilter(PageRequest request) {
+    public Page<Task> getAllTasksWithFilter(PageRequest request, String executor) {
         if (taskRepository.findAll(request).isEmpty()) {
             throw new NoSuchElementException(messageSource.getMessage("errors.404.taskList", new Object[0], null));
         }
-        return taskRepository.findAll(request);
+        if (executor == null || executor.isEmpty()) {
+            return taskRepository.findAll(request);
+
+        }
+        return new PageImpl<>(taskRepository.findAll(request)
+                .stream().filter(
+                        t -> t.getExecutor().equalsIgnoreCase(executor)
+                ).collect(Collectors.toList())
+        );
     }
 
     /**
@@ -106,9 +116,8 @@ public class TaskServiceImpl implements TaskService {
         return getById(taskId);
     }
 
-
     /**
-     * Получение задачи исполнителя
+     * Получение задач исполнителя
      *
      * @param executor исполнитель, указанный в задаче
      */
@@ -120,7 +129,6 @@ public class TaskServiceImpl implements TaskService {
         }
         return tasks;
     }
-
 
     /**
      * Создание новой задачи
@@ -138,7 +146,6 @@ public class TaskServiceImpl implements TaskService {
         }
         throw new InvalidTaskFieldException(messageSource.getMessage("errors.400.dublicateTask", new Object[0], null));
     }
-
 
     /**
      * Удаление задачи по id

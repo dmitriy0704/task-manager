@@ -13,7 +13,7 @@ public interface TaskService {
 
     List<Task> getTasks();
 
-    Page<Task> getAllTasksWithFilter(PageRequest request);
+    Page<Task> getAllTasksWithFilter(PageRequest request, String filter);
 
     Task getTaskById(Long id);
 
