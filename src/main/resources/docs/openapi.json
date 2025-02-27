@@ -16,7 +16,7 @@
   },
   "servers": [
     {
-      "url": "http://localhost:8080",
+      "url": "http://localhost:8189",
       "description": "Generated server url"
     }
   ],
@@ -42,29 +42,8 @@
           "Управление задачами"
         ],
         "summary": "Обновление статуса задачи",
-        "description": "Необходимо указать id задачи",
+        "description": "Необходимо указать id задачи и одно из доступных значений статуса",
         "operationId": "updateStatusTask",
-        "requestBody": {
-          "description": "Update an existent pet in the store",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/TaskDto"
-              }
-            },
-            "application/xml": {
-              "schema": {
-                "$ref": "#/components/schemas/TaskDto"
-              }
-            },
-            "application/x-www-form-urlencoded": {
-              "schema": {
-                "$ref": "#/components/schemas/TaskDto"
-              }
-            }
-          },
-          "required": true
-        },
         "parameters": [
           {
             "name": "taskId",
@@ -75,17 +54,18 @@
               "type": "integer",
               "format": "int64"
             }
-          },
-          {
-            "name": "taskDto",
-            "in": "query",
-            "description": "Статус задачи",
-            "required": true,
-            "schema": {
-              "$ref": "#/components/schemas/TaskDto"
-            }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaskStatusDto"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "description": "OK",
@@ -139,7 +119,7 @@
           "Управление задачами"
         ],
         "summary": "Обновление приоритета задачи",
-        "description": "Необходимо указать id задачи",
+        "description": "Необходимо указать id задачи и одно из доступных значений приоритета",
         "operationId": "updatePriorityTask",
         "parameters": [
           {
@@ -157,7 +137,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/TaskDto"
+                "$ref": "#/components/schemas/TaskPriorityDto"
               }
             }
           },
@@ -234,7 +214,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/TaskDto"
+                "$ref": "#/components/schemas/TaskDescriptionDto"
               }
             }
           },
@@ -311,7 +291,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/TaskDto"
+                "$ref": "#/components/schemas/TaskCommentsDto"
               }
             }
           },
@@ -1068,7 +1048,14 @@
         "operationId": "getAdmin",
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
           },
           "400": {
             "description": "Bad Request",
@@ -1253,46 +1240,43 @@
           }
         }
       },
-      "TaskDto": {
+      "TaskStatusDto": {
+        "required": [
+          "status"
+        ],
         "type": "object",
         "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "title": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          },
           "status": {
             "type": "string",
+            "description": "Статусы задачи",
+            "example": "PENDING, IN_PROGRESS, FINISHED",
             "enum": [
               "PENDING",
               "IN_PROGRESS",
               "FINISHED"
             ]
-          },
+          }
+        },
+        "description": "Статус задачи"
+      },
+      "TaskPriorityDto": {
+        "required": [
+          "priority"
+        ],
+        "type": "object",
+        "properties": {
           "priority": {
             "type": "string",
+            "description": "Приоритеты задачи",
+            "example": "LOW, MEDIUM, HIGH",
             "enum": [
               "LOW",
               "MEDIUM",
               "HIGH"
             ]
-          },
-          "comments": {
-            "type": "string"
-          },
-          "executor": {
-            "type": "string"
-          },
-          "author": {
-            "type": "string"
           }
         },
-        "description": "Dto задачи"
+        "description": "Приоритет задачи"
       },
       "Task": {
         "type": "object",
@@ -1319,7 +1303,7 @@
           },
           "status": {
             "type": "string",
-            "description": "Статус",
+            "description": "Статусы задачи",
             "example": "PENDING, IN_PROGRESS, FINISHED",
             "enum": [
               "PENDING",
@@ -1329,7 +1313,7 @@
           },
           "priority": {
             "type": "string",
-            "description": "Приоритет задачи",
+            "description": "Приоритеты задачи",
             "example": "LOW, MEDIUM, HIGH",
             "enum": [
               "LOW",
@@ -1376,7 +1360,33 @@
             ]
           }
         },
-        "description": "Информация о пользователях"
+        "description": "Информация о пользователе"
+      },
+      "TaskDescriptionDto": {
+        "required": [
+          "description"
+        ],
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string",
+            "description": "Описание задачи"
+          }
+        },
+        "description": "Описание задачи"
+      },
+      "TaskCommentsDto": {
+        "required": [
+          "comments"
+        ],
+        "type": "object",
+        "properties": {
+          "comments": {
+            "type": "string",
+            "description": "Комментарии к задаче"
+          }
+        },
+        "description": "Комментарии к задаче"
       },
       "TaskSaveDto": {
         "required": [
@@ -1397,7 +1407,7 @@
           },
           "status": {
             "type": "string",
-            "description": "Статус",
+            "description": "Статусы задачи",
             "example": "PENDING, IN_PROGRESS, FINISHED",
             "enum": [
               "PENDING",
@@ -1407,7 +1417,7 @@
           },
           "priority": {
             "type": "string",
-            "description": "Приоритет задачи",
+            "description": "Приоритеты задачи",
             "example": "LOW, MEDIUM, HIGH",
             "enum": [
               "LOW",

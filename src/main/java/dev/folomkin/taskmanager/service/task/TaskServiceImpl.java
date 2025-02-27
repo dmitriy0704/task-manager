@@ -32,7 +32,8 @@ public class TaskServiceImpl implements TaskService {
     public TaskServiceImpl(TaskRepository taskRepository,
                            MessageSource messageSource,
                            UserService userService,
-                           TaskMapper taskMapper, UserRepository userRepository) {
+                           TaskMapper taskMapper, UserRepository userRepository
+    ) {
         this.taskRepository = taskRepository;
         this.messageSource = messageSource;
         this.userService = userService;

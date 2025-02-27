@@ -24,7 +24,7 @@ spring:
   api-docs:
     enabled: true
 server:
-  port: 8080
+  port: 8189
   error:
     include-stacktrace: on_param
 token:
