@@ -89,8 +89,6 @@ class TaskControllerTest {
     @DisplayName("Удаление задачи по id авторизованным пользователем")
     @Test
     void adminCanDeleteCustomer() throws Exception {
-
-
         mockMvc.perform(delete("/api/v1/delete-task/{taskId}", 1L)
                 .with(csrf())
                 .with(user("admin").roles("ADMIN"))

@@ -101,8 +101,7 @@ public class TaskControllerIT {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.status").value(task.getStatus().toString()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.priority").value(task.getPriority().toString()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.comments").value(task.getComments()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.executor").value(task.getExecutor()))
-        ;
+                .andExpect(MockMvcResultMatchers.jsonPath("$.executor").value(task.getExecutor()));
     }
 
 

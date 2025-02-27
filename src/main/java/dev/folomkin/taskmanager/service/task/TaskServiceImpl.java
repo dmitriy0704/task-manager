@@ -41,6 +41,32 @@ public class TaskServiceImpl implements TaskService {
         this.userRepository = userRepository;
     }
 
+
+    // ===== USERS ===== //
+
+    /**
+     * Получение задач автора по id
+     *
+     * @param userId id пользователя
+     */
+    @Override
+    public List<Task> getAllTasksByAuthorId(Long userId) {
+        Optional<User> user = Optional.ofNullable(userService.getUserById(userId).orElseThrow(
+                // Пользователь не найден
+                () -> new NoSuchElementException(messageSource.getMessage("errors.404.user", new Object[0], null))
+        ));
+
+        List<Task> userTasks = taskRepository.findTaskByAuthorId(user.get().getId());
+        if (userTasks.isEmpty()) {
+            // У пользователя нет задач
+            throw new NoSuchElementException(messageSource.getMessage("errors.404.user.tasks", new Object[0], null));
+        }
+        return taskRepository.findTaskByAuthorId(userId);
+    }
+
+
+    // ===== TASKS ==== //
+
     /**
      * Получение всех задач без фильтрации
      *
@@ -84,11 +110,15 @@ public class TaskServiceImpl implements TaskService {
     /**
      * Получение задачи исполнителя
      *
-     * @param executor email исполнителя
+     * @param executor исполнитель, указанный в задаче
      */
     @Override
     public List<Task> getTaskByExecutor(String executor) {
-        return taskRepository.findAllByExecutor(executor);
+        List<Task> tasks = taskRepository.findAllByExecutor(executor);
+        if (tasks.isEmpty()) {
+            throw new NoSuchElementException(messageSource.getMessage("errors.404.executor", new Object[0], null));
+        }
+        return tasks;
     }
 
 
@@ -109,25 +139,6 @@ public class TaskServiceImpl implements TaskService {
         throw new InvalidTaskFieldException(messageSource.getMessage("errors.400.dublicateTask", new Object[0], null));
     }
 
-    /**
-     * Получение задач автора по id
-     *
-     * @param userId id пользователя
-     */
-    @Override
-    public List<Task> getAllTasksByAuthorId(Long userId) {
-        Optional<User> user = Optional.ofNullable(userService.getUserById(userId).orElseThrow(
-                // Пользователь не найден
-                () -> new NoSuchElementException(messageSource.getMessage("errors.404.user", new Object[0], null))
-        ));
-
-        List<Task> userTasks = taskRepository.findTaskByAuthorId(user.get().getId());
-        if (userTasks.isEmpty()) {
-            // У пользователя нет задач
-            throw new NoSuchElementException(messageSource.getMessage("errors.404.user.tasks", new Object[0], null));
-        }
-        return taskRepository.findTaskByAuthorId(userId);
-    }
 
     /**
      * Удаление задачи по id
