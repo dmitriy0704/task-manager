@@ -142,7 +142,7 @@ public class TaskController {
     @PutMapping(value = "/update-task/priority/{taskId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Task> updatePriorityTask(
             @PathVariable("taskId") @Parameter(description = "Идентификатор задачи", required = true) Long taskId,
-            @Valid @RequestBody @Parameter(description = "Приоритет задачи", required = true) TaskPriorityDto taskDto) {
+            @RequestBody @Parameter(description = "Приоритет задачи", required = true) TaskPriorityDto taskDto) {
         return ResponseEntity.ok(taskService.updatePriorityTask(taskId, taskDto));
     }
 
@@ -152,7 +152,7 @@ public class TaskController {
     @PutMapping(value = "/update-task/description/{taskId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Task> updateDescriptionTask(
             @PathVariable("taskId") @Parameter(description = "Идентификатор задачи", required = true) Long taskId,
-            @Valid @RequestBody @Parameter(description = "Описание задачи", required = true) TaskDescriptionDto taskDto) {
+            @RequestBody @Parameter(description = "Описание задачи", required = true) TaskDescriptionDto taskDto) {
         return ResponseEntity.ok(taskService.updateDescriptionTask(taskId, taskDto));
     }
 
@@ -163,7 +163,7 @@ public class TaskController {
     public ResponseEntity<?> updateStatusTask(
             @PathVariable("taskId")
             @Parameter(description = "Идентификатор задачи", required = true) Long taskId,
-            @Valid @RequestBody @Parameter(description = "Статус задачи", required = true) TaskStatusDto newStatus,
+            @RequestBody @Parameter(description = "Статус задачи", required = true) TaskStatusDto newStatus,
             @AuthenticationPrincipal User user) {
         return ResponseEntity.ok().body(taskService.updateStatusTask(taskId, newStatus, user));
     }
@@ -172,7 +172,7 @@ public class TaskController {
     @PutMapping(value = "/update-task/comments/{taskId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Task> updateCommentsTask(
             @PathVariable("taskId") @Parameter(description = "Идентификатор задачи", required = true) Long taskId,
-            @Valid @RequestBody @Parameter(description = "Комментарии к задаче", required = true) TaskCommentsDto taskDto,
+            @RequestBody @Parameter(description = "Комментарии к задаче", required = true) TaskCommentsDto taskDto,
             @AuthenticationPrincipal User user) {
         return ResponseEntity.ok(taskService.updateCommentsTask(taskId, taskDto, user));
     }

@@ -4,18 +4,18 @@ volumes:
   pg_data:
 
 services:
-#  app:
-#    image: back:0.0.1
-#    build:
-#      context: .
-#      dockerfile: Dockerfile
-#    ports:
-#      - "8189:8189"
-#    depends_on:
-#      - app-db
-#    environment:
-#      - SERVER_PORT=8189
-#      - SPRING_DATASOURCE_URL=jdbc:postgresql://app-db/task_manager
+  app:
+    image: back:0.0.1
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8189:8189"
+    depends_on:
+      - app-db
+    environment:
+      - SERVER_PORT=8189
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://app-db/task_manager
 
   app-db:
     image: postgres
