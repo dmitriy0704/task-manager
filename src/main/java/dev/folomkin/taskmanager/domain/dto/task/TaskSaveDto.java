@@ -4,8 +4,10 @@ import dev.folomkin.taskmanager.domain.model.Priority;
 import dev.folomkin.taskmanager.domain.model.Status;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -36,6 +38,8 @@ public class TaskSaveDto {
     @Schema(description = "Комментарии к задаче")
     private String comments;
 
+    @Email(message="Пожалуйста укажите корректный email адрес исполнителя задачи")
+    @Pattern(regexp=".+@.+\\..+", message="Пожалуйста укажите корректный email адрес исполнителя задачи")
     @NotBlank(message = "Назначьте исполнителя")
     @Schema(description = "Исполнитель задачи. Идентифицируется по email")
     private String executor;
