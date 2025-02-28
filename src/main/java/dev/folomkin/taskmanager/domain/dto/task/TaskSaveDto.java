@@ -39,7 +39,7 @@ public class TaskSaveDto {
     @Schema(description = "Комментарии к задаче")
     private String comments;
 
-    @Email(regexp = ".+@.+\\..+")
+    @Email(regexp = ".+@.+\\..+", message = "Укажите корректный email адрес")
     @NotBlank(message = "Назначьте исполнителя")
     @Schema(description = "Исполнитель задачи. Идентифицируется по email")
     private String executor;
