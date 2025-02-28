@@ -189,6 +189,9 @@ public class TaskController {
     }
 
 
+    /**
+     * Используется для детализации ошибок полей DTO
+     * */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Map<String, String> handleValidationExceptions(

@@ -35,6 +35,10 @@ public class AuthController {
         return authenticationService.signIn(request);
     }
 
+
+    /**
+     * Используется для детализации ошибок полей DTO
+    * */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Map<String, String> handleValidationExceptions(
