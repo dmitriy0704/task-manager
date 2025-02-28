@@ -1,5 +1,6 @@
 package dev.folomkin.taskmanager.domain.dto.task;
 
+import dev.folomkin.taskmanager.domain.dto.task.emailvalidator.EmailWithTld;
 import dev.folomkin.taskmanager.domain.model.Priority;
 import dev.folomkin.taskmanager.domain.model.Status;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -38,8 +39,7 @@ public class TaskSaveDto {
     @Schema(description = "Комментарии к задаче")
     private String comments;
 
-    @Email(message="Пожалуйста укажите корректный email адрес исполнителя задачи")
-    @Pattern(regexp=".+@.+\\..+", message="Пожалуйста укажите корректный email адрес исполнителя задачи")
+    @Email(regexp = ".+@.+\\..+")
     @NotBlank(message = "Назначьте исполнителя")
     @Schema(description = "Исполнитель задачи. Идентифицируется по email")
     private String executor;
