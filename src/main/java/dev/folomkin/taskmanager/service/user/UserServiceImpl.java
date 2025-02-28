@@ -143,4 +143,19 @@ public class UserServiceImpl implements UserService {
         save(user);
     }
 
+
+    /**
+     * Выдача прав администратора текущему пользователю
+     * <p>
+     * Нужен для демонстрации
+     */
+    @Deprecated
+    public void getUser() {
+        var user = getCurrentUser();
+        user.setRole(Role.ROLE_USER);
+        save(user);
+    }
+
+
+
 }

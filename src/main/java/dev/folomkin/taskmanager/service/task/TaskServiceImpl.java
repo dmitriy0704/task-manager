@@ -197,6 +197,23 @@ public class TaskServiceImpl implements TaskService {
         return changedTask;
     }
 
+
+    /**
+     * Обновление исполнителя задачи по id
+     *
+     * @param taskId  id задачи
+     * @param taskDto тело запроса с новым исполнителем
+     * @return changedTask - обновленная задача
+     */
+    @Override
+    public Task updateExecutorTask(Long taskId, TaskExecutorDto taskDto) {
+        Task changedTask = getById(taskId);
+        changedTask.setExecutor(taskDto.getExecutor());
+        taskRepository.save(changedTask);
+        return changedTask;
+    }
+
+
     /**
      * Обновление статуса задачи по id
      *

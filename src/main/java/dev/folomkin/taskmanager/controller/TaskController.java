@@ -163,8 +163,18 @@ public class TaskController {
     @PutMapping(value = "/update-task/description/{taskId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Task> updateDescriptionTask(
             @PathVariable("taskId") @Parameter(description = "Идентификатор задачи", required = true) Long taskId,
-            @RequestBody @Parameter(description = "Описание задачи", required = true) TaskDescriptionDto taskDto) {
+            @Valid @RequestBody @Parameter(description = "Описание задачи", required = true) TaskDescriptionDto taskDto) {
         return ResponseEntity.ok(taskService.updateDescriptionTask(taskId, taskDto));
+    }
+
+
+    @PreAuthorize(value = "hasRole('ADMIN')")
+    @Operation(summary = "Обновление исполнителя", description = "Необходимо указать id задачи")
+    @PutMapping(value = "/update-task/executor/{taskId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Task> updateExecutorTask(
+            @PathVariable("taskId") @Parameter(description = "Идентификатор задачи", required = true) Long taskId,
+            @Valid @RequestBody @Parameter(description = "Новый исполнитель задачи", required = true) TaskExecutorDto taskDto) {
+        return ResponseEntity.ok(taskService.updateExecutorTask(taskId, taskDto));
     }
 
 
@@ -179,11 +189,12 @@ public class TaskController {
         return ResponseEntity.ok().body(taskService.updateStatusTask(taskId, newStatus, user));
     }
 
+
     @Operation(summary = "Обновление комментария к задаче", description = "Необходимо указать id задачи")
     @PutMapping(value = "/update-task/comments/{taskId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Task> updateCommentsTask(
             @PathVariable("taskId") @Parameter(description = "Идентификатор задачи", required = true) Long taskId,
-            @RequestBody @Parameter(description = "Комментарии к задаче", required = true) TaskCommentsDto taskDto,
+            @Valid @RequestBody @Parameter(description = "Комментарии к задаче", required = true) TaskCommentsDto taskDto,
             @AuthenticationPrincipal User user) {
         return ResponseEntity.ok(taskService.updateCommentsTask(taskId, taskDto, user));
     }
@@ -191,7 +202,7 @@ public class TaskController {
 
     /**
      * Используется для детализации ошибок полей DTO
-     * */
+     */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Map<String, String> handleValidationExceptions(

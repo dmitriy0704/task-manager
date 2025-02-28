@@ -28,4 +28,5 @@ public interface UserService {
     User getCurrentUser();
 
     void getAdmin();
+    void getUser();
 }

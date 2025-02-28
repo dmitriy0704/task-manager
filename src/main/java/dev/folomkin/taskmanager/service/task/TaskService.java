@@ -26,6 +26,7 @@ public interface TaskService {
     Task updateCommentsTask(Long id, TaskCommentsDto taskDto, User user);
 
     Task updatePriorityTask(Long id, TaskPriorityDto taskDto);
+    Task updateExecutorTask(Long id, TaskExecutorDto taskDto);
 
     void deleteTask(Long id);
 

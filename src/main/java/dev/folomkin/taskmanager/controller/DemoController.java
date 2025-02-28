@@ -23,6 +23,14 @@ public class DemoController {
         return "Теперь вы можете отправлять запросы от имени администратора";
     }
 
+
+    @GetMapping("/set-user")
+    @Operation(summary = "Стать Юзером")
+    public String getUser() {
+        service.getUser();
+        return "Теперь вы можете отправлять запросы от имени пользователя";
+    }
+
     @GetMapping("/admin")
     @Operation(summary = "Демонстрация доступа только авторизованным пользователям с ролью ADMIN")
     @PreAuthorize("hasRole('ADMIN')")
