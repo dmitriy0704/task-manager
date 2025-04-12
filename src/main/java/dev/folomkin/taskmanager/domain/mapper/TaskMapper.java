@@ -9,12 +9,12 @@ import org.springframework.stereotype.Component;
 public class TaskMapper {
     public Task map(TaskSaveDto taskSaveDto, User user) {
         Task task = new Task();
-        task.setTitle(taskSaveDto.getTitle());
-        task.setDescription(taskSaveDto.getDescription());
+        task.setTitle(taskSaveDto.getTitle().trim());
+        task.setDescription(taskSaveDto.getDescription().trim());
         task.setPriority(taskSaveDto.getPriority());
-        task.setComments(taskSaveDto.getComments());
+        task.setComments(taskSaveDto.getComments().trim());
         task.setStatus(taskSaveDto.getStatus());
-        task.setExecutor(taskSaveDto.getExecutor());
+        task.setExecutor(taskSaveDto.getExecutor().trim());
         task.setAuthor(user);
         return task;
     }

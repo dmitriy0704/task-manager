@@ -100,7 +100,7 @@ public class TaskServiceImpl implements TaskService {
             return new PageImpl<>(taskRepository.findAll(request)
                     .stream().filter(
                             t ->
-                                    t.getExecutor().equalsIgnoreCase(executor)
+                                    t.getExecutor().trim().equalsIgnoreCase(executor.trim())
                     ).collect(Collectors.toList())
             );
         }
@@ -108,7 +108,7 @@ public class TaskServiceImpl implements TaskService {
         if (author != null) {
             return new PageImpl<>(taskRepository.findAll(request)
                     .stream().filter(
-                            t -> t.getAuthor().getEmail().equalsIgnoreCase(author)
+                            t -> t.getAuthor().getEmail().trim().equalsIgnoreCase(author.trim())
                     ).collect(Collectors.toList())
             );
         }
@@ -132,7 +132,7 @@ public class TaskServiceImpl implements TaskService {
      */
     @Override
     public List<Task> getTaskByExecutor(String executor) {
-        List<Task> tasks = taskRepository.findAllByExecutor(executor);
+        List<Task> tasks = taskRepository.findAllByExecutor(executor.trim());
         if (tasks.isEmpty()) {
             throw new NoSuchElementException(messageSource.getMessage("errors.404.executor", new Object[0], null));
         }
@@ -149,7 +149,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     @Transactional
     public Task create(TaskSaveDto taskSaveDto, User user) {
-        Task task = taskRepository.findByTitle(taskSaveDto.getTitle());
+        Task task = taskRepository.findByTitle(taskSaveDto.getTitle().trim());
         if (task == null) {
             return taskRepository.save(taskMapper.map(taskSaveDto, user));
         }
@@ -192,7 +192,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public Task updateDescriptionTask(Long taskId, TaskDescriptionDto taskDto) {
         Task changedTask = getById(taskId);
-        changedTask.setDescription(taskDto.getDescription());
+        changedTask.setDescription(taskDto.getDescription().trim());
         taskRepository.save(changedTask);
         return changedTask;
     }
@@ -208,7 +208,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public Task updateExecutorTask(Long taskId, TaskExecutorDto taskDto) {
         Task changedTask = getById(taskId);
-        changedTask.setExecutor(taskDto.getExecutor());
+        changedTask.setExecutor(taskDto.getExecutor().trim());
         taskRepository.save(changedTask);
         return changedTask;
     }
@@ -259,7 +259,7 @@ public class TaskServiceImpl implements TaskService {
      * @param user         текущий пользователь
      */
     public boolean isExecutor(Task taskToChange, User user) {
-        boolean isExecutorUser = taskToChange.getExecutor().equalsIgnoreCase(user.getEmail());
+        boolean isExecutorUser = taskToChange.getExecutor().equalsIgnoreCase(user.getEmail().trim());
         if (isExecutorUser) {
             return true;
         }
